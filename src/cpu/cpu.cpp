@@ -4,9 +4,6 @@ uint8_t Cpu::readMem(uint8_t addr, Mem ram) {
     return ram.data[addr];
 }
 
-void Cpu::writeMem(uint8_t addr, Mem ram, uint8_t val) {
-    ram.data[addr] = val;
-}
 
 void Cpu::readOp(Mem ram) {
     ir = ram.data[pc];
