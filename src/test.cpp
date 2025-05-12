@@ -2,16 +2,16 @@
 #include <iostream>
 
 int main() {
-    Cpu *cpu = new Cpu();
-    cpu->c = 30;
+    lmgb::Cpu *cpu = new lmgb::Cpu();
+    cpu->bc.bytes.l = 30;
 
-    Mem mem{};
-    mem.data[0] = 0x41;
+    lmgb::Memory *mem = new lmgb::Memory();
+    mem->Write(0, 0x41);
     cpu->readOp(mem);
     std::cout << "(" << (int)mem.data[0] << ") "<< "b = " << (int)cpu->b << std::endl;
 
-    mem.data[1] = 0x06;
-    mem.data[2] = 120;
+    mem.mem[1] = 0x06;
+    mem.mem[2] = 120;
     cpu->readOp(mem);
     std::cout << "(" << (int)mem.data[1] << ") "<< "b = " << (int)cpu->b << std::endl;
 

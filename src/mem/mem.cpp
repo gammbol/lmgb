@@ -1,12 +1,12 @@
 #include "mem.h"
 
-uint8_t lmgb::Memory::Read(uint16_t addr) {
+byte lmgb::Memory::Read(word addr) {
   if (addr < 0 || addr > 0xFFFF)
     return 0;
   return mem[addr];
 }
 
-void lmgb::Memory::Write(uint16_t addr, uint8_t val) {
+void lmgb::Memory::Write(word addr, byte val) {
   if (addr < 0 || addr > 0xFFFF)
     return;
   mem[addr] = val;

@@ -1,12 +1,15 @@
 #ifndef MEM_H
 #define MEM_H
 
+#include <cstdint>
+#include "lmgb.h"
+
 namespace lmgb {
   class Memory {
-    uint8_t mem[0x10000];
+    byte mem[0x10000];
     public:
-      void Write(uint16_t addr, uint8_t val);
-      uint8_t Read(uint16_t addr);
+      void Write(word addr, word val);
+      byte Read(word addr);
   };
 }
 
