@@ -4,8 +4,6 @@
 #include "lmgb.h"
 #include "mem.h"
 
-#define REG8T16(f, s) ((f << 8) | s)
-
 #define SYNC_WITH_CPU(clockDelta)
 
 namespace lmgb {
@@ -14,17 +12,16 @@ namespace lmgb {
       byte l;
       byte h;
     } bytes;
-    word word;
+    word pair;
   };
 
   class Cpu {
   public:
     WordRegister af, bc, de, hl;
+    word sp;
+    lmgb::Memory mem;
 
-
-    lmgb::Memory &mmu;
-
-    Cpu(lmgb::Memory mem);
+    Cpu();
     // ~Cpu();
 
     void Step();
