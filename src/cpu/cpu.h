@@ -7,6 +7,7 @@
 #define SYNC_WITH_CPU(clockDelta)
 
 namespace lmgb {
+  // pair of registers
   union WordRegister {
     struct {
       byte l;
@@ -14,7 +15,7 @@ namespace lmgb {
     } bytes;
     word pair;
   };
-
+  
   class Cpu {
   public:
     WordRegister af, bc, de, hl;
@@ -25,9 +26,7 @@ namespace lmgb {
     // ~Cpu();
 
     void Step();
-
-    uint8_t readMem(uint8_t addr, lmgb::Memory ram);
-    void readOp(lmgb::Memory ram);
+    void readOp();
   };
 }
 

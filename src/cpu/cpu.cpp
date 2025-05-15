@@ -1,7 +1,7 @@
 #include "cpu.h"
 
 lmgb::Cpu::Cpu() {
-
+    // initializing registers
     af.pair = 0x11;
     af.bytes.l = 0xb0;
     bc.pair = 0x0013;
@@ -9,6 +9,7 @@ lmgb::Cpu::Cpu() {
     hl.pair = 0x014d;
     sp = 0xfffe;
 
+    // initializing RAM
     mem.Write(0xff05, 0x00);
     mem.Write(0xff06, 0x00);
     mem.Write(0xff07, 0x00);

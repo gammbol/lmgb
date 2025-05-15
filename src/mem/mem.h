@@ -3,9 +3,11 @@
 
 #include "lmgb.h"
 
+#define MEM_LEN 0x10000
+
 namespace lmgb {
   class Memory {
-    byte mem[0x10000];
+    byte mem[MEM_LEN];
     public:
       byte Read(word addr);
       void Write(word addr, byte val);
