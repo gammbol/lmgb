@@ -8,6 +8,7 @@ lmgb::Cpu::Cpu() {
     de.pair = 0x00d8;
     hl.pair = 0x014d;
     sp = 0xfffe;
+    pc = 0x100;
 
     // initializing RAM
     mem.Write(0xff05, 0x00);
@@ -43,6 +44,223 @@ lmgb::Cpu::Cpu() {
     mem.Write(0xffff, 0x00);
 }
 
+byte lmgb::Cpu::readOp(word &pc) {
+    byte opcode = mem.Read(pc);
+    pc++;
+    return opcode;
+}
+
 void lmgb::Cpu::Step() {
-    byte opcode = mem.Read(0);
+    byte opcode = readOp(pc);
+
+    switch (opcode) {
+        // LD nn,n
+        case 0x06:
+            bc.bytes.h = mem.Read(pc);
+            break;
+        case 0x0e:
+            bc.bytes.l = mem.Read(pc);
+            break;
+        case 0x16:
+            de.bytes.h = mem.Read(pc);
+            break;
+        case 0x1e:
+            de.bytes.l = mem.Read(pc);
+            break;
+        case 0x26:
+            hl.bytes.h = mem.Read(pc);
+            break;
+        case 0x2e:
+            hl.bytes.l = mem.Read(pc);
+            break;
+
+        // LD r1,r2
+        case 0x7f:
+            af.bytes.h = af.bytes.h;
+            break;
+        case 0x78:
+            af.bytes.h = bc.bytes.h;
+            break;
+        case 0x79:
+            af.bytes.h = bc.bytes.l;
+            break;
+        case 0x7a:
+            af.bytes.h = de.bytes.h;
+            break;
+        case 0x7b:
+            af.bytes.h = de.bytes.l;
+            break;
+        case 0x7c:
+            af.bytes.h = hl.bytes.h;
+            break;
+        case 0x7d:
+            af.bytes.h = hl.bytes.l;
+            break;
+        case 0x7e:
+            af.bytes.h = mem.Read(hl.pair);
+            break;
+        case 0x40:
+            bc.bytes.h = bc.bytes.h;
+            break;
+        case 0x41:
+            bc.bytes.h = bc.bytes.l;
+            break;
+        case 0x42:
+            bc.bytes.h = de.bytes.h;
+            break;
+        case 0x43:
+            bc.bytes.h = de.bytes.l;
+            break;
+        case 0x44:
+            bc.bytes.h = hl.bytes.h;
+            break;
+        case 0x45:
+            bc.bytes.h = hl.bytes.l;
+            break;
+        case 0x46:
+            bc.bytes.h = mem.Read(hl.pair);
+            break;
+        case 0x48:
+            bc.bytes.l = bc.bytes.h;
+            break;
+        case 0x49:
+            bc.bytes.l = bc.bytes.l;
+            break;
+        case 0x4a:
+            bc.bytes.l = de.bytes.h;
+            break;
+        case 0x4b:
+            bc.bytes.l = de.bytes.l;
+            break;
+        case 0x4c:
+            bc.bytes.l = hl.bytes.h;
+            break;
+        case 0x4d:
+            bc.bytes.l = hl.bytes.l;
+            break;
+        case 0x4e:
+            bc.bytes.l = mem.Read(hl.pair);
+            break;
+        case 0x50:
+            de.bytes.h = bc.bytes.h;
+            break;
+        case 0x51:
+            de.bytes.h = bc.bytes.l;
+            break;
+        case 0x52:
+            de.bytes.h = de.bytes.h;
+            break;
+        case 0x53:
+            de.bytes.h = de.bytes.l;
+            break;
+        case 0x54:
+            de.bytes.h = hl.bytes.h;
+            break;
+        case 0x55:
+            de.bytes.h = hl.bytes.l;
+            break;
+        case 0x56:
+            de.bytes.h = mem.Read(hl.pair);
+            break; 
+        case 0x58:
+            de.bytes.l = bc.bytes.h;
+            break;
+        case 0x59:
+            de.bytes.l = bc.bytes.l;
+            break;
+        case 0x5a:
+            de.bytes.l = de.bytes.h;
+            break;
+        case 0x5b:
+            de.bytes.l = de.bytes.l;
+            break;
+        case 0x5c:
+            de.bytes.l = hl.bytes.h;
+            break;
+        case 0x5d:
+            de.bytes.l = hl.bytes.l;
+            break;
+        case 0x5e:
+            de.bytes.l = mem.Read(hl.pair);
+            break;
+        case 0x60:
+            hl.bytes.h = bc.bytes.h;
+            break;
+        case 0x61:
+            hl.bytes.h = bc.bytes.l;
+            break;
+        case 0x62:
+            hl.bytes.h = de.bytes.h;
+            break;
+        case 0x63:
+            hl.bytes.h = de.bytes.l;
+            break;
+        case 0x64:
+            hl.bytes.h = hl.bytes.h;
+            break;
+        case 0x65:
+            hl.bytes.h = hl.bytes.l;
+            break;
+        case 0x66:
+            hl.bytes.h = mem.Read(hl.pair);
+            break;
+        case 0x68:
+            hl.bytes.l = bc.bytes.h;
+            break;
+        case 0x69:
+            hl.bytes.l = bc.bytes.l;
+            break;
+        case 0x6a:
+            hl.bytes.l = de.bytes.h;
+            break;
+        case 0x6b:
+            hl.bytes.l = de.bytes.l;
+            break;
+        case 0x6c:
+            hl.bytes.l = hl.bytes.h;
+            break;
+        case 0x6d:
+            hl.bytes.l = hl.bytes.l;
+            break;
+        case 0x6e:
+            hl.bytes.l = mem.Read(hl.pair);
+            break;
+        case 0x70:
+            mem.Write(hl.pair, bc.bytes.h);
+            break;
+        case 0x71:
+            mem.Write(hl.pair, bc.bytes.l);
+            break;
+        case 0x72:
+            mem.Write(hl.pair, de.bytes.h);
+            break;
+        case 0x73:
+            mem.Write(hl.pair, de.bytes.l);
+            break;
+        case 0x74:
+            mem.Write(hl.pair, hl.bytes.h);
+            break;
+        case 0x75:
+            mem.Write(hl.pair, hl.bytes.l);
+            break;
+        case 0x36:
+            byte val = mem.Read(pc);
+            mem.Write(hl.pair, val);
+            break;
+
+        // LD A,n
+        case 0x0a:
+            af.bytes.h = mem.Read(bc.pair);
+            break;
+        case 0x1a:
+            af.bytes.h = mem.Read(de.pair);
+            break;
+        case 0xfa:
+            word val = btow(mem.Read(pc), mem.Read(pc+1));
+            af.bytes.h = mem.Read(val);
+            break;
+        case 0x3e:
+            af.bytes.h = mem.Read(pc);
+            break;
+    }
 }

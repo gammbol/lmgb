@@ -5,6 +5,7 @@
 #include "mem.h"
 
 #define SYNC_WITH_CPU(clockDelta)
+#define btow(a, b) ((a << 8) | b)
 
 namespace lmgb {
   // pair of registers
@@ -19,14 +20,14 @@ namespace lmgb {
   class Cpu {
   public:
     WordRegister af, bc, de, hl;
-    word sp;
+    word sp, pc;
     lmgb::Memory mem;
 
     Cpu();
     // ~Cpu();
 
+    byte readOp(word &pc);
     void Step();
-    void readOp();
   };
 }
 

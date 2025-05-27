@@ -11,3 +11,5 @@ void lmgb::Memory::Write(word addr, byte val) {
     return;
   mem[addr] = val;
 }
+
+
