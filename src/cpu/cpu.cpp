@@ -263,4 +263,76 @@ void lmgb::Cpu::Step() {
     af.bytes.h = mem.Read(pc);
     break;
   }
+
+  // LD A,(C)
+  // LD (C),A
+  case 0xf2:
+    af.bytes.h = mem.Read(0xff00 + bc.bytes.l);
+    break;
+  case 0xe2:
+    mem.Write(0xff00 + bc.bytes.l, af.bytes.h);
+    break;
+
+  // LD A,(HLD)
+  // LD A,(HL-)
+  // LDD A,(HL)
+  case 0x3a:
+    af.bytes.h = mem.Read(hl.pair);
+    hl.pair--;
+    break;
+
+  // LD (HLD),A
+  // LD (HL-),A
+  // LDD (HL),A
+  case 0x32:
+    mem.Write(hl.pair, af.bytes.h);
+    hl.pair--;
+    break;
+
+  // LD A,(HLI)
+  // LD A,(HL+)
+  // LDI A,(HL)
+  case 0x2a:
+    af.bytes.h = mem.Read(hl.pair);
+    hl.pair++;
+    break;
+
+  // LD (HLI),A
+  // LD (HL+),A
+  // LDI (HL),A
+  case 0x22:
+    mem.Write(hl.pair, af.bytes.h);
+    hl.pair++;
+    break;
+
+  // LDH (n),A
+  case 0xe0:
+    byte memAddr = mem.Read(pc);
+    mem.Write(0xff00+memAddr, af.bytes.h);
+    break;
+
+  // LDH A,(n)
+  case 0xf0:
+    byte memAddr = mem.Read(pc);
+    af.bytes.h = mem.Read(0xff00 + memAddr);
+    break;
+
+  // LD n,nn
+  case 0x01:
+    bc.pair = btow(mem.Read(pc), mem.Read(pc+1));
+    break;
+  case 0x11:
+    de.pair = btow(mem.Read(pc), mem.Read(pc+1));
+    break;
+  case 0x21:
+    hl.pair = btow(mem.Read(pc), mem.Read(pc+1));
+    break;
+  case 0x31:
+    sp = btow(mem.Read(pc), mem.Read(pc+1));
+    break;
+
+  // LD SP,HL
+  case 0xf9:
+    sp = hl.pair;
+    break;
 }
