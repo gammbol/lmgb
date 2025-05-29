@@ -57,27 +57,27 @@ void lmgb::Cpu::Step() {
   switch (opcode) {
   // LD nn,n
   case 0x06:
-    bc.bytes.h = mem.Read(pc);
+    bc.bytes.h = mem.Read(pc++);
     cycles = 8;
     break;
   case 0x0e:
-    bc.bytes.l = mem.Read(pc);
+    bc.bytes.l = mem.Read(pc++);
     cycles = 8;
     break;
   case 0x16:
-    de.bytes.h = mem.Read(pc);
+    de.bytes.h = mem.Read(pc++);
     cycles = 8;
     break;
   case 0x1e:
-    de.bytes.l = mem.Read(pc);
+    de.bytes.l = mem.Read(pc++);
     cycles = 8;
     break;
   case 0x26:
-    hl.bytes.h = mem.Read(pc);
+    hl.bytes.h = mem.Read(pc++);
     cycles = 8;
     break;
   case 0x2e:
-    hl.bytes.l = mem.Read(pc);
+    hl.bytes.l = mem.Read(pc++);
     cycles = 8;
     break;
 
@@ -380,33 +380,33 @@ void lmgb::Cpu::Step() {
 
   // LDH (n),A
   case 0xe0:
-    byte memAddr = mem.Read(pc);
-    mem.Write(0xff00+memAddr, af.bytes.h);
+    byte memAddr = mem.Read(pc++);
+    mem.Write(0xff00 + memAddr, af.bytes.h);
     cycles = 12;
     break;
 
   // LDH A,(n)
   case 0xf0:
-    byte memAddr = mem.Read(pc);
+    byte memAddr = mem.Read(pc++);
     af.bytes.h = mem.Read(0xff00 + memAddr);
     cycles = 12;
     break;
 
   // LD n,nn
   case 0x01:
-    bc.pair = btow(mem.Read(pc), mem.Read(pc+1));
+    bc.pair = btow(mem.Read(pc++), mem.Read(pc++));
     cycles = 12;
     break;
   case 0x11:
-    de.pair = btow(mem.Read(pc), mem.Read(pc+1));
+    de.pair = btow(mem.Read(pc++), mem.Read(pc++));
     cycles = 12;
     break;
   case 0x21:
-    hl.pair = btow(mem.Read(pc), mem.Read(pc+1));
+    hl.pair = btow(mem.Read(pc++), mem.Read(pc++));
     cycles = 12;
     break;
   case 0x31:
-    sp = btow(mem.Read(pc), mem.Read(pc+1));
+    sp = btow(mem.Read(pc++), mem.Read(pc++));
     cycles = 12;
     break;
 
@@ -414,6 +414,69 @@ void lmgb::Cpu::Step() {
   case 0xf9:
     sp = hl.pair;
     cycles = 8;
+    break;
+
+  // LDHL SP,n
+  case 0xf8:
+    int8_t n = mem.Read(pc++);
+    hl.pair = sp + n;
+    af.bytes.l &= 0x00;
+    if (HALF_CARRY_FLAG(sp, n))
+      af.bytes.l |= 0x20;
+    if (CARRY_FLAG(sp, n))
+      af.bytes.l |= 0x10;
+    cycles = 12;
+    break;
+
+  // LD (nn),SP
+  case 0x08:
+    word addr = mem.Read(pc++);
+    mem.Write(addr, sp);
+    cycles = 20;
+    break;
+
+  // PUSH nn
+  case 0xf5:
+    mem.Write(--sp, af.bytes.h);
+    mem.Write(--sp, af.bytes.l);
+    cycles = 16;
+    break;
+  case 0xc5:
+    mem.Write(--sp, bc.bytes.h);
+    mem.Write(--sp, bc.bytes.l);
+    cycles = 16;
+    break;
+  case 0xd5:
+    mem.Write(--sp, de.bytes.h);
+    mem.Write(--sp, de.bytes.l);
+    cycles = 16;
+    break;
+  case 0xe5:
+    mem.Write(--sp, hl.bytes.h);
+    mem.Write(--sp, hl.bytes.l);
+    cycles = 16;
+    break;
+
+  // POP nn
+  case 0xf1:
+    af.bytes.l = mem.Read(sp++);
+    af.bytes.h = mem.Read(sp++);
+    cycles = 12;
+    break;
+  case 0xc1:
+    bc.bytes.l = mem.Read(sp++);
+    bc.bytes.h = mem.Read(sp++);
+    cycles = 12;
+    break;
+  case 0xd1:
+    de.bytes.l = mem.Read(sp++);
+    de.bytes.h = mem.Read(sp++);
+    cycles = 12;
+    break;
+  case 0xe1:
+    hl.bytes.l = mem.Read(sp++);
+    hl.bytes.h = mem.Read(sp++);
+    cycles = 12;
     break;
   }
 }
