@@ -478,5 +478,9 @@ void lmgb::Cpu::Step() {
     hl.bytes.h = mem.Read(sp++);
     cycles = 12;
     break;
+
+  // ADD A,n
+  // TODO: Carry & half carry check. checks that are made now dont work properly 
+
   }
 }
