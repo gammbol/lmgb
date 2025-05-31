@@ -11,6 +11,8 @@
 #define HF_CHECK(a, b) (((a & 0x0f) + (b & 0x0f)) > 0x0f)
 #define CF_CHECK(a, b) (((a & 0xff) + (b & 0xff)) > 0xff)
 
+#define CF_GET(f) ((f & 0x10) >> 4)
+
 #define ZF_SET(f) (f |= 0x01 << 7)
 #define NF_SET(f) (f |= 0x01 << 6)
 #define HF_SET(f) (f |= 0x01 << 5)
