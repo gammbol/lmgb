@@ -715,5 +715,311 @@ void lmgb::Cpu::Step() {
     NF_SET(af.bytes.l);
     cycles = 8;
     break;
+    
+  // SBC A,n
+  case 0x9f:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, af.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, af.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (af.bytes.h + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x98:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, bc.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, bc.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (bc.bytes.h + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x99:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, bc.bytes.l + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, bc.bytes.l + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (bc.bytes.l + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x9a:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, de.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, de.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (de.bytes.h + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x9b:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, de.bytes.l + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, de.bytes.l + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (de.bytes.l + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x9c:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, hl.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, hl.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (hl.bytes.l + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x9d:
+    byte carry = CF_GET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, hl.bytes.l + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, hl.bytes.l + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (hl.bytes.l + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x9e:
+    byte carry = CF_GET(af.bytes.l);
+    byte val = mem.Read(hl.pair);
+    HSF_CHECK(af.bytes.h, val + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, val + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    af.bytes.h -= (val + carry);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_SET(af.bytes.l);
+    cycles = 8;
+    break;
+  // SBC A,#
+  // Opcode - ??
+  // Cycles - ??
+
+  // AND n
+  case 0xa7:
+    af.bytes.h = af.bytes.h && af.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa0:
+    af.bytes.h = af.bytes.h && bc.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa1:
+    af.bytes.h = af.bytes.h && bc.bytes.l;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa2:
+    af.bytes.h = af.bytes.h && de.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa3:
+    af.bytes.h = af.bytes.h && de.bytes.l;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa4:
+    af.bytes.h = af.bytes.h && hl.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa5:
+    af.bytes.h = af.bytes.h && hl.bytes.l;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa6:
+    byte val = mem.Read(hl.pair);
+    af.bytes.h = af.bytes.h && val;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
+  case 0xe6:
+    byte val = mem.Read(pc++);
+    af.bytes.h = af.bytes.h && val;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
+
+  // OR n
+  case 0xb7:
+    af.bytes.h = af.bytes.h || af.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb0:
+    af.bytes.h = af.bytes.h || bc.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb1:
+    af.bytes.h = af.bytes.h || bc.bytes.l;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb2:
+    af.bytes.h = af.bytes.h || de.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb3:
+    af.bytes.h = af.bytes.h || de.bytes.l;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb4:
+    af.bytes.h = af.bytes.h || hl.bytes.h;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb5:
+    af.bytes.h = af.bytes.h || hl.bytes.l;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xb6:
+    byte val = mem.Read(hl.pair);
+    af.bytes.h = af.bytes.h || val;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
+  case 0xf6:
+    byte val = mem.Read(pc++);
+    af.bytes.h = af.bytes.h || val;
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
+
+  // XOR n
+  case 0xaf:
+    af.bytes.h = (!af.bytes.h) != (!af.bytes.h);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa8:
+    af.bytes.h = (!af.bytes.h) != (!bc.bytes.h);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xa9:
+    af.bytes.h = (!af.bytes.h) != (!bc.bytes.l);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xaa:
+    af.bytes.h = (!af.bytes.h) != (!de.bytes.h);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xab:
+    af.bytes.h = (!af.bytes.h) != (!de.bytes.l);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xac:
+    af.bytes.h = (!af.bytes.h) != (!hl.bytes.h);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xad:
+    af.bytes.h = (!af.bytes.h) != (!hl.bytes.l);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0xae:
+    byte val = mem.Read(hl.pair);
+    af.bytes.h = (!af.bytes.h) != (!val);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
+  case 0xee:
+    byte val = mem.Read(pc++);
+    af.bytes.h = (!af.bytes.h) != (!val);
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    CF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
   }
 }
