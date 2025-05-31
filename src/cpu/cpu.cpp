@@ -481,6 +481,106 @@ void lmgb::Cpu::Step() {
 
   // ADD A,n
   // TODO: Carry & half carry check. checks that are made now dont work properly 
-
+  case 0x87:
+    if (HF_CHECK(af.bytes.h, af.bytes.h))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, af.bytes.h))
+      CF_SET(af.bytes.l);
+    af.bytes.h += af.bytes.h;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x80:
+    if (HF_CHECK(af.bytes.h, bc.bytes.h))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, bc.bytes.h))
+      CF_SET(af.bytes.l);
+    af.bytes.h += bc.bytes.h;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x81:
+    if (HF_CHECK(af.bytes.h, bc.bytes.l))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, bc.bytes.l))
+      CF_SET(af.bytes.l);
+    af.bytes.h += bc.bytes.l;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x82:
+    if (HF_CHECK(af.bytes.h, de.bytes.h))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, de.bytes.h))
+      CF_SET(af.bytes.l);
+    af.bytes.h += de.bytes.h;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x83:
+    if (HF_CHECK(af.bytes.h, de.bytes.l))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, de.bytes.l))
+      CF_SET(af.bytes.l);
+    af.bytes.h += de.bytes.l;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x84:
+    if (HF_CHECK(af.bytes.h, hl.bytes.h))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, hl.bytes.h))
+      CF_SET(af.bytes.l);
+    af.bytes.h += hl.bytes.h;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x85:
+    if (HF_CHECK(af.bytes.h, hl.bytes.l))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, hl.bytes.l))
+      CF_SET(af.bytes.l);
+    af.bytes.h += hl.bytes.l;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+  case 0x86:
+    byte val = mem.Read(hl.pair);
+    if (HF_CHECK(af.bytes.h, val))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, val))
+      CF_SET(af.bytes.l);
+    af.bytes.h += val;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
+  case 0xc6:
+    byte val = mem.Read(pc++);
+    if (HF_CHECK(af.bytes.h, val))
+      HF_SET(af.bytes.l);
+    if (CF_CHECK(af.bytes.h, val))
+      CF_SET(af.bytes.l);
+    af.bytes.h += val;
+    if (ZF_CHECK(af.bytes.h))
+      ZF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    cycles = 8;
+    break;
   }
 }
