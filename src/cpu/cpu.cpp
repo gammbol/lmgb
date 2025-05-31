@@ -642,56 +642,56 @@ void lmgb::Cpu::Step() {
 
   // SUB n
   case 0x97:
-    HSF_CHECK(af.bytes.h, af.bytes.h) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, af.bytes.h) ? CF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, af.bytes.h) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, af.bytes.h) ? CF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
     af.bytes.h -= af.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 4;
     break;
   case 0x90:
-    HSF_CHECK(af.bytes.h, bc.bytes.h) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, bc,bytes.h) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, bc.bytes.h) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, bc,bytes.h) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= bc.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 4;
     break;
   case 0x91:
-    HSF_CHECK(af.bytes.h, bc.bytes.l) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, bc.bytes.l) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, bc.bytes.l) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, bc.bytes.l) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= bc.bytes.l;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 4;
     break;
   case 0x92:
-    HSF_CHECK(af.bytes.h, de.bytes.h) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, de.bytes.h) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, de.bytes.h) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, de.bytes.h) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= de.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 4;
     break;
   case 0x93:
-    HSF_CHECK(af.bytes.h, de.bytes.l) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, de.bytes.l) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, de.bytes.l) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, de.bytes.l) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= de.bytes.l;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 4;
     break;
   case 0x94:
-    HSF_CHECK(af.bytes.h, hl.bytes.h) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, hl.bytes.h) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, hl.bytes.h) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, hl.bytes.h) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= hl.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 4;
     break;
   case 0x95:
-    HSF_CHECK(af.bytes.h, hl.bytes.l) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, hl.bytes.l) ? CF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, hl.bytes.l) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, hl.bytes.l) ? CF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
     af.bytes.h -= hl.bytes.l;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -699,8 +699,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x96:
     byte val = mem.Read(hl.pair);
-    HSF_CHECK(af.bytes.h, val) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, val) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, val) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, val) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= val;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -708,8 +708,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0xd6:
     byte val = mem.Read(pc++);
-    HSF_CHECK(af.bytes.h, val) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, val) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, val) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, val) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= val;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -719,8 +719,8 @@ void lmgb::Cpu::Step() {
   // SBC A,n
   case 0x9f:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, af.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, af.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, af.bytes.h + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, af.bytes.h + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (af.bytes.h + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -728,8 +728,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x98:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, bc.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, bc.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, bc.bytes.h + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, bc.bytes.h + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (bc.bytes.h + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -737,8 +737,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x99:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, bc.bytes.l + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, bc.bytes.l + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, bc.bytes.l + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, bc.bytes.l + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (bc.bytes.l + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -746,8 +746,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x9a:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, de.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, de.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, de.bytes.h + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, de.bytes.h + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (de.bytes.h + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -755,8 +755,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x9b:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, de.bytes.l + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, de.bytes.l + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, de.bytes.l + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, de.bytes.l + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (de.bytes.l + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -764,8 +764,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x9c:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, hl.bytes.h + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, hl.bytes.h + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, hl.bytes.h + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, hl.bytes.h + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (hl.bytes.l + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -773,8 +773,8 @@ void lmgb::Cpu::Step() {
     break;
   case 0x9d:
     byte carry = CF_GET(af.bytes.l);
-    HSF_CHECK(af.bytes.h, hl.bytes.l + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, hl.bytes.l + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, hl.bytes.l + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, hl.bytes.l + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (hl.bytes.l + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
@@ -783,8 +783,8 @@ void lmgb::Cpu::Step() {
   case 0x9e:
     byte carry = CF_GET(af.bytes.l);
     byte val = mem.Read(hl.pair);
-    HSF_CHECK(af.bytes.h, val + carry) ? HF_SET(af.bytes.l) : HF_RESET(af.bytes.l);
-    CSF_CHECK(af.bytes.h, val + carry) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+    HSF_CHECK(af.bytes.h, val + carry) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
+    CSF_CHECK(af.bytes.h, val + carry) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
     af.bytes.h -= (val + carry);
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
