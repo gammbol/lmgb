@@ -14,6 +14,9 @@
 #define HSF_CHECK(a, b) ((a & 0x0f) < (b & 0x0f))
 #define CSF_CHECK(a, b) (a < b)
 
+#define HF_CHECK16(a, b) (((a & 0x00ff) + (b & 0x00ff)) > 0x00ff)
+#define CF_CHECK16(a, b) (((a & 0xffff) + (b & 0xffff)) > 0xffff)
+
 #define Z_FLAG 0x80
 #define N_FLAG 0x40
 #define H_FLAG 0x20
