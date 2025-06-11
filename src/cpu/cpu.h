@@ -5,7 +5,10 @@
 #include "mem.h"
 
 #define SYNC_WITH_CPU(clockDelta)
+
 #define btow(a, b) ((a << 8) | b)
+
+#define SWAP(a) (a = ((a & 0x0f) << 4) | ((a & 0xf0) >> 4))
 
 #define ZF_CHECK(a) (a == 0)
 #define HF_CHECK(a, b) (((a & 0x0f) + (b & 0x0f)) > 0x0f)
@@ -22,6 +25,9 @@
 #define H_FLAG 0x20
 #define C_FLAG 0x10
 
+#define ZF_GET(f) ((f & Z_FLAG) >> 7)
+#define NF_GET(f) ((f & N_FLAG) >> 6)
+#define HF_GET(f) ((f & H_FLAG) >> 5)
 #define CF_GET(f) ((f & C_FLAG) >> 4)
 
 #define ZF_SET(f) (f |= Z_FLAG)

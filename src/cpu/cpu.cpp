@@ -1370,5 +1370,127 @@ void lmgb::Cpu::Step() {
     sp--;
     cycles = 8;
     break;
+
+  // SWAP
+  case 0xcb:
+    byte cbPref = mem.Read(pc++);
+    switch (cbPref) {
+    case 0x37:
+      SWAP(af.bytes.h);
+      ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x30:
+      SWAP(bc.bytes.h);
+      ZF_CHECK(bc.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x31:
+      SWAP(bc.bytes.l);
+      ZF_CHECK(bc.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x32:
+      SWAP(de.bytes.h);
+      ZF_CHECK(de.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x33:
+      SWAP(de.bytes.l);
+      ZF_CHECK(de.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x34:
+      SWAP(hl.bytes.h);
+      ZF_CHECK(hl.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x35:
+      SWAP(hl.bytes.l);
+      ZF_CHECK(hl.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x36:
+      byte val = mem.Read(pc);
+      SWAP(val);
+      ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      CF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      mem.Write(pc++, val);
+      cycles = 16;
+      break;
+    }
+    break;
+
+  // DAA
+  case 0x27:
+    byte correction = 0;
+    if (!NF_GET(af.bytes.l)) {
+      if (HF_GET(af.bytes.l) || (af.bytes.h & 0x0f) > 0x09)
+        correction |= 0x06;
+      if (CF_GET(af.bytes.l) || af.bytes.h > 0x99) {
+        correction |= 0x60;
+        CF_SET(af.bytes.l);
+      }
+      af.bytes.l -= correction;
+    } else {
+      if (HF_GET(af.bytes.l))
+        correction |= 0x06;
+      if (CF_GET(af.bytes.l)) {
+        correction |= 0x06;
+        CF_SET(af.bytes.l);
+      }
+      af.bytes.h -= correction;
+    }
+    ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+
+  // CPL
+  case 0x2f:
+    af.bytes.h = ~af.bytes.h;
+    NF_SET(af.bytes.l);
+    HF_SET(af.bytes.l);
+    cycles = 4;
+    break;
+
+  // CCF
+  case 0x3f:
+    CF_GET(af.bytes.l) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+
+  // SCF
+  case 0x37:
+    CF_SET(af.bytes.l);
+    NF_RESET(af.bytes.l);
+    HF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
   }
 }
