@@ -1,6 +1,8 @@
 #include "cpu.h"
 
 lmgb::Cpu::Cpu() {
+  state = RUNNING;
+
   // initializing registers
   af.pair = 0x11;
   af.bytes.l = 0xb0;
@@ -1490,6 +1492,21 @@ void lmgb::Cpu::Step() {
     CF_SET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
+    cycles = 4;
+    break;
+
+  // HALT
+  case 0x76:
+    state = HALTED;
+    cycles = 4;
+    break;
+
+  case 0x10:
+    byte stPref = mem.Read(pc++);
+    if (stPref != 0x00) {
+      std::cerr << "ERROR: no 0x00 value after 0x10 (STOP) opcode!" << std::endl;
+    }
+    state = STOPPED;
     cycles = 4;
     break;
   }

@@ -1,6 +1,8 @@
 #ifndef LMGB_CPU_H
 #define LMGB_CPU_H
 
+#include <iostream>
+
 #include "lmgb.h"
 #include "mem.h"
 
@@ -50,11 +52,19 @@ union WordRegister {
   word pair;
 };
 
+enum CpuState {
+  RUNNING,
+  HALTED,
+  STOPPED
+};
+
 class Cpu {
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
   lmgb::Memory mem;
+
+  CpuState state;
 
   Cpu();
   // ~Cpu();
