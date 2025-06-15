@@ -8,6 +8,8 @@
 
 #define SYNC_WITH_CPU(clockDelta)
 
+#define getbatpos(a, pos) ((a & (a << pos)) >> pos)
+
 #define btow(a, b) ((a << 8) | b)
 
 #define SWAP(a) (a = ((a & 0x0f) << 4) | ((a & 0xf0) >> 4))
@@ -65,6 +67,7 @@ public:
   lmgb::Memory mem;
 
   CpuState state;
+  bool isInterruptsAvailable;
 
   Cpu();
   // ~Cpu();
