@@ -1448,7 +1448,7 @@ void lmgb::Cpu::Step() {
 
     // RLC n
     case 0x07:
-      char oldBit = getbatpos(af.bytes.h, 7);
+      byte oldBit = getbatpos(af.bytes.h, 7);
       af.bytes.h <<= 1;
       af.bytes.h |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1458,7 +1458,7 @@ void lmgb::Cpu::Step() {
       cycles = 8;
       break;
     case 0x00:
-      char oldBit = getbatpos(bc.bytes.h, 7);
+      byte oldBit = getbatpos(bc.bytes.h, 7);
       bc.bytes.h <<= 1;
       bc.bytes.h |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1468,7 +1468,7 @@ void lmgb::Cpu::Step() {
       cycles = 8;
       break;
     case 0x01:
-      char oldBit = getbatpos(bc.bytes.l, 7);
+      byte oldBit = getbatpos(bc.bytes.l, 7);
       bc.bytes.l <<= 1;
       bc.bytes.l |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1478,7 +1478,7 @@ void lmgb::Cpu::Step() {
       cycles = 8;
       break;
     case 0x02:
-      char oldBit = getbatpos(de.bytes.h, 7);
+      byte oldBit = getbatpos(de.bytes.h, 7);
       de.bytes.h <<= 1;
       de.bytes.h |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1488,7 +1488,7 @@ void lmgb::Cpu::Step() {
       cycles = 8;
       break;
     case 0x03:
-      char oldBit = getbatpos(de.bytes.l, 7);
+      byte oldBit = getbatpos(de.bytes.l, 7);
       de.bytes.l <<= 1;
       de.bytes.l |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1498,7 +1498,7 @@ void lmgb::Cpu::Step() {
       cycles = 8;
       break;
     case 0x04:
-      char oldBit = getbatpos(hl.bytes.h, 7);
+      byte oldBit = getbatpos(hl.bytes.h, 7);
       hl.bytes.h <<= 1;
       hl.bytes.h |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1508,7 +1508,7 @@ void lmgb::Cpu::Step() {
       cycles = 8;
       break;
     case 0x05:
-      char oldBit = getbatpos(hl.bytes.l, 7);
+      byte oldBit = getbatpos(hl.bytes.l, 7);
       hl.bytes.l <<= 1;
       hl.bytes.l |= oldBit;
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1519,12 +1519,264 @@ void lmgb::Cpu::Step() {
       break;
     case 0x06:
       byte val = mem.Read(hl.pair);
-      char oldBit = getbatpos(val, 7);
+      byte oldBit = getbatpos(val, 7);
       val <<= 1;
       val |= oldBit;
       mem.Write(hl.pair, val);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 16;
+      break;
+
+    // RL n
+    case 0x17:
+      byte oldBit = getbatpos(af.bytes.h, 7);
+      af.bytes.h <<= 1;
+      af.bytes.h |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x10:
+      byte oldBit = getbatpos(bc.bytes.h, 7);
+      bc.bytes.h <<= 1;
+      bc.bytes.h |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(bc.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x11:
+      byte oldBit = getbatpos(bc.bytes.l, 7);
+      bc.bytes.l <<= 1;
+      bc.bytes.l |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(bc.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x12:
+      byte oldBit = getbatpos(de.bytes.h, 7);
+      de.bytes.h <<= 1;
+      de.bytes.h |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(de.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x13:
+      byte oldBit = getbatpos(de.bytes.l, 7);
+      de.bytes.l <<= 1;
+      de.bytes.l |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(de.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x14:
+      byte oldBit = getbatpos(hl.bytes.h, 7);
+      hl.bytes.h <<= 1;
+      hl.bytes.h |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(hl.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x15:
+      byte oldBit = getbatpos(hl.bytes.l, 7);
+      hl.bytes.l <<= 1;
+      hl.bytes.l |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(hl.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x16:
+      byte val = mem.Read(hl.pair);
+      bite oldBit = getbatpos(val, 7);
+      val <<= 1;
+      val |= CF_GET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      mem.Write(hl.pair, val);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 16;
+      break;
+
+    // RRC n
+    case 0x0f:
+      byte oldBit = getbatpos(af.bytes.h, 0);
+      af.bytes.h >>= 1;
+      af.bytes.h |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x08:
+      byte oldBit = getbatpos(bc.bytes.h, 0);
+      bc.bytes.h >>= 1;
+      bc.bytes.h |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(bc.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x09:
+      byte oldBit = getbatpos(bc.bytes.l, 0);
+      bc.bytes.l >>= 1;
+      bc.bytes.l |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(bc.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x0a:
+      byte oldBit = getbatpos(de.bytes.h, 0);
+      de.bytes.h >>= 1;
+      de.bytes.h |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(de.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x0b:
+      byte oldBit = getbatpos(de.bytes.l, 0);
+      de.bytes.l >>= 1;
+      de.bytes.l |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(de.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x0c:
+      byte oldBit = getbatpos(hl.bytes.h, 0);
+      hl.bytes.h >>= 1;
+      hl.bytes.h |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(hl.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x0d:
+      byte oldBit = getbatpos(hl.bytes.l, 0);
+      hl.bytes.l >>= 1;
+      hl.bytes.l |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(hl.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x0e:
+      byte val = mem.Read(hl.pair);
+      byte oldBit = getbatpos(val, 0);
+      val >>= 1;
+      val |= (oldBit << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      mem.Write(hl.pair, val);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 16;
+      break;
+
+    // RR n
+    case 0x1f:
+      byte oldBit = getbatpos(af.bytes.h, 0);
+      af.bytes.h >>= 1;
+      af.bytes.h |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(af.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x18:
+      byte oldBit = getbatpos(bc.bytes.h, 0);
+      bc.bytes.h >>= 1;
+      bc.bytes.h |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(bc.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x19:
+      byte oldBit = getbatpos(bc.bytes.l, 0);
+      bc.bytes.l >>= 1;
+      bc.bytes.l |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(bc.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x1a:
+      byte oldBit = getbatpos(de.bytes.h, 0);
+      de.bytes.h >>= 1;
+      de.bytes.h |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(de.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x1b:
+      byte oldBit = getbatpos(de.bytes.l, 0);
+      de.bytes.l >>= 1;
+      de.bytes.l |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(de.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x1c:
+      byte oldBit = getbatpos(hl.bytes.h, 0);
+      hl.bytes.h >>= 1;
+      hl.bytes.h |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(hl.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x1d:
+      byte oldBit = getbatpos(hl.bytes.l, 0);
+      hl.bytes.l >>= 1;
+      hl.bytes.l |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(hl.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      NF_RESET(af.bytes.l);
+      HF_RESET(af.bytes.l);
+      cycles = 8;
+      break;
+    case 0x1e:
+      byte val = mem.Read(hl.pair);
+      byte oldBit = getbatpos(val, 0);
+      val >>= 1;
+      val |= (CF_GET(af.bytes.l) << 7);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
+      ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+      mem.Write(hl.pair, val);
       NF_RESET(af.bytes.l);
       HF_RESET(af.bytes.l);
       cycles = 16;
@@ -1613,7 +1865,7 @@ void lmgb::Cpu::Step() {
 
   // RLCA
   case 0x07:
-    char oldBit = getbatpos(af.bytes.h, 7);
+    byte oldBit = getbatpos(af.bytes.h, 7);
     af.bytes.h <<= 1;
     af.bytes.h |= oldBit;
     (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1625,7 +1877,7 @@ void lmgb::Cpu::Step() {
 
   // RLA
   case 0x17:
-    char oldBit = getbatpos(af.bytes.h, 7);
+    byte oldBit = getbatpos(af.bytes.h, 7);
     af.bytes.h <<= 1;
     af.bytes.h |= CF_GET(af.bytes.l);
     (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1637,7 +1889,7 @@ void lmgb::Cpu::Step() {
 
   // RRCA
   case 0x0f:
-    char oldBit = getbatpos(af.bytes.h, 0);
+    byte oldBit = getbatpos(af.bytes.h, 0);
     af.bytes.h >>= 1;
     af.bytes.h |= (oldBit << 7);
     (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
@@ -1649,7 +1901,7 @@ void lmgb::Cpu::Step() {
 
   // RRA
   case 0x1f:
-    char oldBit = getbatpos(af.bytes.h, 0);
+    byte oldBit = getbatpos(af.bytes.h, 0);
     af.bytes.h >>= 1;
     af.bytes.h |= (CF_GET(af.bytes.l) << 7);
     (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
