@@ -9,6 +9,7 @@
 #define SYNC_WITH_CPU(clockDelta)
 
 #define getbatpos(a, pos) ((a & (a << pos)) >> pos)
+#define setbatpos(a, pos, val) (a | (val << pos))
 
 #define btow(a, b) ((a << 8) | b)
 
@@ -54,11 +55,7 @@ union WordRegister {
   word pair;
 };
 
-enum CpuState {
-  RUNNING,
-  HALTED,
-  STOPPED
-};
+enum CpuState { RUNNING, HALTED, STOPPED };
 
 class Cpu {
 public:
