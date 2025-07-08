@@ -1831,7 +1831,7 @@ void lmgb::Cpu::Step() {
     case 0x24:
       byte oldBit = getbatpos(hl.bytes.h, 7);
       hl.bytes.h <<= 1;
-      (oldBit) ? CF_SET(af.bytes.l) ? CF_RESET(af.bytes.l);
+      (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(hl.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
       HF_RESET(af.bytes.l);
