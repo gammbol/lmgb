@@ -58,6 +58,9 @@ union WordRegister {
 enum CpuState { RUNNING, HALTED, STOPPED };
 
 class Cpu {
+private:
+  void getBit(const byte reg, int pos);
+
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
@@ -72,7 +75,6 @@ public:
   byte readOp(word &pc);
   void Step();
 
-  void getBit(const byte reg, int pos);
 };
 } // namespace lmgb
 
