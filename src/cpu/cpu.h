@@ -9,7 +9,8 @@
 #define SYNC_WITH_CPU(clockDelta)
 
 #define getbatpos(a, pos) ((a & (a << pos)) >> pos)
-#define setbatpos(a, pos, val) (a | (val << pos))
+#define setbatpos(a, pos) (a | (1 << pos))
+#define resetbatpos(a, pos) (a & ~(0 << pos))
 
 #define btow(a, b) ((a << 8) | b)
 

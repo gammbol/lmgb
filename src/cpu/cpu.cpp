@@ -1870,7 +1870,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(af.bytes.h, 0);
       byte msb = getbatpos(af.bytes.h, 7);
       af.bytes.h >>= 1;
-      setbatpos(af.bytes.h, 7, msb);
+      msb ? setbatpos(af.bytes.h, 7) : resetbatpos(af.bytes.h, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1881,7 +1881,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(bc.bytes.h, 0);
       byte msb = getbatpos(bc.bytes.h, 7);
       bc.bytes.h >>= 1;
-      setbatpos(bc.bytes.h, 7, msb);
+      msb ? setbatpos(bc.bytes.h, 7) : resetbatpos(bc.bytes.h, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(bc.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1892,7 +1892,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(bc.bytes.l, 0);
       byte msb = getbatpos(bc.bytes.l, 7);
       bc.bytes.l >>= 1;
-      setbatpos(bc.bytes.l, 7, msb);
+      msb ? setbatpos(bc.bytes.l, 7, msb) : resetbatpos(bc.bytes.l);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(bc.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1903,7 +1903,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(de.bytes.h, 0);
       byte msb = getbatpos(de.bytes.h, 7);
       de.bytes.h >>= 1;
-      setbatpos(de.bytes.h, 7, msb);
+      msb ? setbatpos(de.bytes.h, 7) : resetbatpos(de.bytes.h, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(de.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1914,7 +1914,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(de.bytes.l, 0);
       byte msb = getbatpos(de.bytes.l, 7);
       de.bytes.l >>= 1;
-      setbatpos(de.bytes.l, 7, msb);
+      msb ? setbatpos(de.bytes.l, 7) : resetbatpos(de.bytes.l, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(de.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1925,7 +1925,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(hl.bytes.h, 0);
       byte msb = getbatpos(hl.bytes.h, 7);
       hl.bytes.h >>= 1;
-      setbatpos(hl.bytes.h, 7, msb);
+      msb ? setbatpos(hl.bytes.h, 7) : resetbatpos(hl.bytes.h, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(hl.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1936,7 +1936,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(hl.bytes.l, 0);
       byte msb = getbatpos(hl.bytes.l, 7);
       hl.bytes.l >>= 1;
-      setbatpos(hl.bytes.l, 7, msb);
+      msb ? setbatpos(hl.bytes.l, 7) : resetbatpos(hl.bytes.l, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(hl.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1948,7 +1948,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(val, 0);
       byte msb = getbatpos(val, 7);
       val >>= 1;
-      setbatpos(val, 7, msb);
+      msb ? setbatpos(val, 7) : resetbatpos(val);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       mem.Write(hl.pair, val);
