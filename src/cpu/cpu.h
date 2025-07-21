@@ -71,6 +71,8 @@ public:
 
   byte readOp(word &pc);
   void Step();
+
+  void getBit(const byte reg, int pos);
 };
 } // namespace lmgb
 

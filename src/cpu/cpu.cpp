@@ -53,6 +53,13 @@ byte lmgb::Cpu::readOp(word &pc) {
   return opcode;
 }
 
+void lmgb::Cpu::getBit(const byte reg, int pos) {
+  byte bit = getbatpos(reg, pos);
+  ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
+  NF_RESET(af.bytes.l);
+  HF_SET(af.bytes.l);
+}
+
 void lmgb::Cpu::Step() {
   byte opcode = readOp(pc);
   char cycles = 0;
@@ -2027,63 +2034,268 @@ void lmgb::Cpu::Step() {
       break;
 
     // BIT b,r
-    // TODO: check carefully
-    // i am not really sure about this instruction...
     case 0x47:
-      byte bit = getbatpos(af.bytes.h, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(af.bytes.h, 0);
       cycles = 8;
       break;
     case 0x40:
-      byte bit = getbatpos(bc.bytes.h, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(bc.bytes.h, 0);
       cycles = 8;
       break;
     case 0x41:
-      byte bit = getbatpos(bc.bytes.l, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(bc.bytes.l, 0);
       cycles = 8;
       break;
     case 0x42:
-      byte bit = getbatpos(de.bytes.h, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(de.bytes.h, 0);
       cycles = 8;
       break;
     case 0x43:
-      byte bit = getbatpos(de.bytes.l, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(de.bytes.l, 0);
       cycles = 8;
       break;
     case 0x44:
-      byte bit = getbatpos(hl.bytes.h, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(hl.bytes.h, 0);
       cycles = 8;
       break;
     case 0x45:
-      byte bit = getbatpos(hl.bytes.l, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(hl.bytes.l, 0);
       cycles = 8;
       break;
     case 0x46:
       byte val = mem.Read(hl.pair);
-      byte bit = getbatpos(val, 0);
-      ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
-      NF_RESET(af.bytes.l);
-      HF_SET(af.bytes.l);
+      getBit(val, 0);
+      cycles = 16;
+      break;
+    case 0x4f:
+      getBit(af.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x48:
+      getBit(bc.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x49:
+      getBit(bc.bytes.l, 1);
+      cycles = 8;
+      break;
+    case 0x4a:
+      getBit(de.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x4b:
+      getBit(de.bytes.l, 1);
+      cycles = 8;
+      break;
+    case 0x4c:
+      getBit(hl.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x4d:
+      getBit(hl.bytes.l, 1);
+      cycles = 8;
+      break;
+    case 0x4e:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 1);
+      cycles = 16;
+      break;
+    case 0x57:
+      getBit(af.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x50:
+      getBit(bc.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x51:
+      getBit(bc.bytes.l, 2);
+      cycles = 8;
+      break;
+    case 0x52:
+      getBit(de.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x53:
+      getBit(de.bytes.l, 2);
+      cycles = 8;
+      break;
+    case 0x54:
+      getBit(hl.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x55:
+      getBit(hl.bytes.l, 2);
+      cycles = 8;
+      break;
+    case 0x56:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 2);
+      cycles = 16;
+      break;
+    case 0x5f:
+      getBit(af.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x58:
+      getBit(bc.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x59:
+      getBit(bc.bytes.l, 3);
+      cycles = 8;
+      break;
+    case 0x5a:
+      getBit(de.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x5b:
+      getBit(de.bytes.l, 3);
+      cycles = 8;
+      break;
+    case 0x5c:
+      getBit(hl.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x5d:
+      getBit(hl.bytes.l, 3);
+      cycles = 8;
+      break;
+    case 0x5e:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 3);
+      cycles = 16;
+      break;
+    case 0x67:
+      getBit(af.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0x60:
+      getBit(bc.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0x61:
+      getBit(bc.bytes.l, 4);
+      cycles = 8;
+      break;
+    case 0x62:
+      getBit(de.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0x63:
+      getBit(de.bytes.l, 4);
+      cycles = 8;
+      break;
+    case 0x64:
+      getBit(hl.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0x65:
+      getBit(hl.bytes.l, 4);
+      cycles = 8;
+      break;
+    case 0x66:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 4);
+      cycles = 16;
+      break;
+    case 0x6f:
+      getBit(af.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0x68:
+      getBit(bc.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0x69:
+      getBit(bc.bytes.l, 5);
+      cycles = 8;
+      break;
+    case 0x6a:
+      getBit(de.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0x6b:
+      getBit(de.bytes.l, 5);
+      cycles = 8;
+      break;
+    case 0x6c:
+      getBit(hl.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0x6d:
+      getBit(hl.bytes.l, 5);
+      cycles = 8;
+      break;
+    case 0x6e:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 5);
+      cycles = 16;
+      break;
+    case 0x77:
+      getBit(af.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0x70:
+      getBit(bc.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0x71:
+      getBit(bc.bytes.l, 6);
+      cycles = 8;
+      break;
+    case 0x72:
+      getBit(de.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0x73:
+      getBit(de.bytes.l, 6);
+      cycles = 8;
+      break;
+    case 0x74:
+      getBit(hl.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0x75:
+      getBit(hl.bytes.l, 6);
+      cycles = 8;
+      break;
+    case 0x76:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 6);
+      cycles = 16;
+      break;
+    case 0x7f:
+      getBit(af.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0x78:
+      getBit(bc.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0x79:
+      getBit(bc.bytes.l, 7);
+      cycles = 8;
+      break;
+    case 0x7a:
+      getBit(de.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0x7b:
+      getBit(de.bytes.l, 7);
+      cycles = 8;
+      break;
+    case 0x7c:
+      getBit(hl.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0x7d:
+      getBit(hl.bytes.l, 7);
+      cycles = 8;
+      break;
+    case 0x7e:
+      byte val = mem.Read(hl.pair);
+      getBit(val, 7);
       cycles = 16;
       break;
     }
