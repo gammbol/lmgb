@@ -2572,6 +2572,280 @@ void lmgb::Cpu::Step() {
       mem.Write(hl.pair, val);
       cycles = 16;
       break;
+
+    // RES b,r
+    case 0x87:
+      resetbatpos(af.bytes.h, 0);
+      cycles = 8;
+      break;
+    case 0x80:
+      resetbatpos(bc.bytes.h, 0);
+      cycles = 8;
+      break;
+    case 0x81:
+      resetbatpos(bc.bytes.l, 0);
+      cycles = 8;
+      break;
+    case 0x82:
+      resetbatpos(de.bytes.h, 0);
+      cycles = 8;
+      break;
+    case 0x83:
+      resetbatpos(de.bytes.l, 0);
+      cycles = 8;
+      break;
+    case 0x84:
+      resetbatpos(hl.bytes.h, 0);
+      cycles = 8;
+      break;
+    case 0x85:
+      resetbatpos(hl.bytes.l, 0);
+      cycles = 8;
+      break;
+    case 0x86:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 0);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0x8f:
+      resetbatpos(af.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x88:
+      resetbatpos(bc.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x89:
+      resetbatpos(bc.bytes.l, 1);
+      cycles = 8;
+      break;
+    case 0x8a:
+      resetbatpos(de.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x8b:
+      resetbatpos(de.bytes.l, 1);
+      cycles = 8;
+      break;
+    case 0x8c:
+      resetbatpos(hl.bytes.h, 1);
+      cycles = 8;
+      break;
+    case 0x8d:
+      resetbatpos(hl.bytes.l, 1);
+      cycles = 8;
+      break;
+    case 0x8e:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 1);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0x97:
+      resetbatpos(af.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x90:
+      resetbatpos(bc.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x91:
+      resetbatpos(bc.bytes.l, 2);
+      cycles = 8;
+      break;
+    case 0x92:
+      resetbatpos(de.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x93:
+      resetbatpos(de.bytes.l, 2);
+      cycles = 8;
+      break;
+    case 0x94:
+      resetbatpos(hl.bytes.h, 2);
+      cycles = 8;
+      break;
+    case 0x95:
+      resetbatpos(hl.bytes.l, 2);
+      cycles = 8;
+      break;
+    case 0x96:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 2);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0x9f:
+      resetbatpos(af.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x98:
+      resetbatpos(bc.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x99:
+      resetbatpos(bc.bytes.l, 3);
+      cycles = 8;
+      break;
+    case 0x9a:
+      resetbatpos(de.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x9b:
+      resetbatpos(de.bytes.l, 3);
+      cycles = 8;
+      break;
+    case 0x9c:
+      resetbatpos(hl.bytes.h, 3);
+      cycles = 8;
+      break;
+    case 0x9d:
+      resetbatpos(hl.bytes.l, 3);
+      cycles = 8;
+      break;
+    case 0x9e:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 3);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0xa7:
+      resetbatpos(af.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0xa0:
+      resetbatpos(bc.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0xa1:
+      resetbatpos(bc.bytes.l, 4);
+      cycles = 8;
+      break;
+    case 0xa2:
+      resetbatpos(de.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0xa3:
+      resetbatpos(de.bytes.l, 4);
+      cycles = 8;
+      break;
+    case 0xa4:
+      resetbatpos(hl.bytes.h, 4);
+      cycles = 8;
+      break;
+    case 0xa5:
+      resetbatpos(hl.bytes.l, 4);
+      cycles = 8;
+      break;
+    case 0xa6:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 4);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0xaf:
+      resetbatpos(af.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0xa8:
+      resetbatpos(bc.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0xa9:
+      resetbatpos(bc.bytes.l, 5);
+      cycles = 8;
+      break;
+    case 0xaa:
+      resetbatpos(de.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0xab:
+      resetbatpos(de.bytes.l, 5);
+      cycles = 8;
+      break;
+    case 0xac:
+      resetbatpos(hl.bytes.h, 5);
+      cycles = 8;
+      break;
+    case 0xad:
+      resetbatpos(hl.bytes.l, 5);
+      cycles = 8;
+      break;
+    case 0xae:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 5);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0xb7:
+      resetbatpos(af.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0xb0:
+      resetbatpos(bc.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0xb1:
+      resetbatpos(bc.bytes.l, 6);
+      cycles = 8;
+      break;
+    case 0xb2:
+      resetbatpos(de.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0xb3:
+      resetbatpos(de.bytes.l, 6);
+      cycles = 8;
+      break;
+    case 0xb4:
+      resetbatpos(hl.bytes.h, 6);
+      cycles = 8;
+      break;
+    case 0xb5:
+      resetbatpos(hl.bytes.l, 6);
+      cycles = 8;
+      break;
+    case 0xb6:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 6);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
+    case 0xbf:
+      resetbatpos(af.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0xb8:
+      resetbatpos(bc.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0xb9:
+      resetbatpos(bc.bytes.l, 7);
+      cycles = 8;
+      break;
+    case 0xba:
+      resetbatpos(de.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0xbb:
+      resetbatpos(de.bytes.l, 7);
+      cycles = 8;
+      break;
+    case 0xbc:
+      resetbatpos(hl.bytes.h, 7);
+      cycles = 8;
+      break;
+    case 0xdb:
+      resetbatpos(hl.bytes.l, 7);
+      cycles = 8;
+      break;
+    case 0xbe:
+      byte val = mem.Read(hl.pair);
+      resetbatpos(val, 7);
+      mem.Write(hl.pair, val);
+      cycles = 16;
+      break;
     }
     break;
 
