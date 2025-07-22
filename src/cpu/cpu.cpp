@@ -61,6 +61,7 @@ void lmgb::Cpu::getBit(const byte reg, int pos) {
 }
 
 void lmgb::Cpu::Step() {
+  // TODO: redo opcode reading function
   byte opcode = readOp(pc);
   char cycles = 0;
 
@@ -2975,6 +2976,86 @@ void lmgb::Cpu::Step() {
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
     cycles = 4;
+    break;
+
+  // JP nn
+  case 0xc3:
+    byte ls = mem.Read(pc++);
+    pc = btow(mem.Read(pc), ls);
+    cycles = 12;
+    break; 
+
+  // JP cc,nn
+  case 0xc2:
+    if (!ZF_GET(af.bytes.l)) {
+      byte ls = mem.Read(pc++);
+      pc = btow(mem.Read(pc), ls);
+    }
+    cycles = 12;
+    break;
+  case 0xca:
+    if (ZF_GET(af.bytes.l)) {
+      byte ls = mem.Read(pc++);
+      pc = btow(mem.Read(pc), ls);
+    }
+    cycles = 12;
+    break;
+  case 0xd2:
+    if (!CF_GET(af.bytes.l)) {
+      byte ls = mem.Read(pc++);
+      pc = btow(mem.Read(pc), ls);
+    }
+    cycles = 12;
+    break;
+  case 0xda:
+    if (CF_GET(af.bytes.l)) {
+      byte ls = mem.Read(pc++);
+      pc = btow(mem.Read(pc), ls);
+    }
+    cycles = 12;
+    break;
+
+  // JP (HL)
+  case 0xe9:
+    pc = hl.pair;
+    cycles = 4;
+    break;
+
+  // JR n
+  case 0x18:
+    sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+    pc += offset;
+    cycles = 8;
+    break;
+
+  // JR cc,n
+  case 0x20:
+    if (!ZF_GET(af.bytes.l)) {
+      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+      pc += offset;
+    }
+    cycles = 8;
+    break;
+  case 0x28:
+    if (ZF_GET(af.bytes.l)) {
+      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+      pc += offset;
+    }
+    cycles = 8;
+    break;
+  case 0x30:
+    if (!CF_GET(af.bytes.l)) {
+      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+      pc += offset;
+    }
+    cycles = 8;
+    break;
+  case 0x38:
+    if (CF_GET(af.bytes.l)) {
+      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+      pc += offset;
+    }
+    cycles = 8;
     break;
   }
 }
