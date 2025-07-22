@@ -12,6 +12,9 @@
 #define setbatpos(a, pos) (a | (1 << pos))
 #define resetbatpos(a, pos) (a & ~(0 << pos))
 
+#define getmsb(a) ((a & 0xff00) >> 7)
+#define getlsb(a) (a & 0x00ff)
+
 #define btow(a, b) ((a << 8) | b)
 
 #define SWAP(a) (a = ((a & 0x0f) << 4) | ((a & 0xf0) >> 4))

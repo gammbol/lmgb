@@ -3057,5 +3057,152 @@ void lmgb::Cpu::Step() {
     }
     cycles = 8;
     break;
+
+  // CALL nn
+  case 0xcd:
+    word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+    pc += 2;
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = val;
+    cycles = 12;
+    break;
+
+  // CALL cc,nn
+  case 0xc4:
+    if (!ZF_GET(af.bytes.l)) {
+      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      pc += 2;
+      mem.Write(--sp, getmsb(pc));
+      mem.Write(--sp, getlsb(pc));
+      pc = val;
+    }
+    cycles = 12;
+    break;
+  case 0xcc:
+    if (ZF_GET(af.bytes.l)) {
+      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      pc += 2;
+      mem.Write(--sp, getmsb(pc));
+      mem.Write(--sp, getlsb(pc));
+      pc = val;
+    }
+    cycles = 12;
+    break;
+  case 0xd4:
+    if (!CF_GET(af.bytes.l)) {
+      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      pc += 2;
+      mem.Write(--sp, getmsb(pc));
+      mem.Write(--sp, getlsb(pc));
+      pc = val;
+    }
+    cycles = 12;
+    break;
+  case 0xdc:
+    if (CF_GET(af.bytes.l)) {
+      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      pc += 2;
+      mem.Write(--sp, getmsb(pc));
+      mem.Write(--sp, getlsb(pc));
+      pc = val;
+    }
+    cycles = 12;
+    break;
+
+  // RST n
+  case 0xc7:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0000;
+    cycles = 32;
+    break;
+  case 0xcf:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0008;
+    cycles = 32;
+    break;
+  case 0xd7:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0010;
+    cycles = 32;
+    break;
+  case 0xdf:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0018;
+    cycles = 32;
+    break;
+  case 0xe7:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0020;
+    cycles = 32;
+    break;
+  case 0xef:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0028;
+    cycles = 32;
+    break;
+  case 0xf7:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0030;
+    cycles = 32;
+    break;
+  case 0xff:
+    mem.Write(--sp, getmsb(pc));
+    mem.Write(--sp, getlsb(pc));
+    pc = 0x0038;
+    cycles = 32;
+    break;
+
+  // RET
+  case 0xc9:
+    pc = btow(mem.Read(sp+1), mem.Read(sp));
+    sp += 2;
+    cycles = 8;
+    break;
+
+  // RET cc
+  case 0xc0:
+    if (!ZF_GET(af.bytes.l)) {
+      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      sp += 2;
+    }
+    cycles = 8;
+    break;
+  case 0xc8:
+    if (ZF_GET(af.bytes.l)) {
+      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      sp += 2;
+    }
+    cycles = 8;
+    break;
+  case 0xd0:
+    if (!CF_GET(af.bytes.l)) {
+      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      sp += 2;
+    }
+    cycles = 8;
+    break;
+  case 0xd8:
+    if (CF_GET(af.bytes.l)) {
+      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      sp += 2;
+    }
+    cycles = 8;
+    break;
+
+  // RETI
+  case 0xd9:
+    pc = btow(mem.Read(sp+1), mem.Read(sp));
+    sp += 2;
+    isInterruptsAvailable = true;
+    cycles = 8;
+    break;
   }
 }
