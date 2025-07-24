@@ -3139,49 +3139,49 @@ void lmgb::Cpu::Step() {
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0000;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xcf:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0008;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xd7:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0010;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xdf:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0018;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xe7:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0020;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xef:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0028;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xf7:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0030;
-    cycles = 32;
+    cycles = 16;
     break;
   case 0xff:
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
     pc = 0x0038;
-    cycles = 32;
+    cycles = 16;
     break;
 
   // RET
