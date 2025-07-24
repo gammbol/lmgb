@@ -1893,7 +1893,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(bc.bytes.l, 0);
       byte msb = getbatpos(bc.bytes.l, 7);
       bc.bytes.l >>= 1;
-      msb ? setbatpos(bc.bytes.l, 7, msb) : resetbatpos(bc.bytes.l);
+      msb ? setbatpos(bc.bytes.l, 7) : resetbatpos(bc.bytes.l, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(bc.bytes.l) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       NF_RESET(af.bytes.l);
@@ -1949,7 +1949,7 @@ void lmgb::Cpu::Step() {
       byte oldBit = getbatpos(val, 0);
       byte msb = getbatpos(val, 7);
       val >>= 1;
-      msb ? setbatpos(val, 7) : resetbatpos(val);
+      msb ? setbatpos(val, 7) : resetbatpos(val, 7);
       (oldBit) ? CF_SET(af.bytes.l) : CF_RESET(af.bytes.l);
       ZF_CHECK(val) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
       mem.Write(hl.pair, val);
@@ -2837,7 +2837,7 @@ void lmgb::Cpu::Step() {
       resetbatpos(hl.bytes.h, 7);
       cycles = 8;
       break;
-    case 0xdb:
+    case 0xbd:
       resetbatpos(hl.bytes.l, 7);
       cycles = 8;
       break;
@@ -2983,7 +2983,7 @@ void lmgb::Cpu::Step() {
     byte ls = mem.Read(pc++);
     pc = btow(mem.Read(pc), ls);
     cycles = 12;
-    break; 
+    break;
 
   // JP cc,nn
   case 0xc2:
@@ -3076,7 +3076,7 @@ void lmgb::Cpu::Step() {
 
   // CALL nn
   case 0xcd:
-    word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+    word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
     pc += 2;
     mem.Write(--sp, getmsb(pc));
     mem.Write(--sp, getlsb(pc));
@@ -3087,7 +3087,7 @@ void lmgb::Cpu::Step() {
   // CALL cc,nn
   case 0xc4:
     if (!ZF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
       pc += 2;
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
@@ -3099,7 +3099,7 @@ void lmgb::Cpu::Step() {
     break;
   case 0xcc:
     if (ZF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
       pc += 2;
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
@@ -3111,7 +3111,7 @@ void lmgb::Cpu::Step() {
     break;
   case 0xd4:
     if (!CF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
       pc += 2;
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
@@ -3123,7 +3123,7 @@ void lmgb::Cpu::Step() {
     break;
   case 0xdc:
     if (CF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc+2), mem.Read(pc+1));
+      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
       pc += 2;
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
@@ -3186,7 +3186,7 @@ void lmgb::Cpu::Step() {
 
   // RET
   case 0xc9:
-    pc = btow(mem.Read(sp+1), mem.Read(sp));
+    pc = btow(mem.Read(sp + 1), mem.Read(sp));
     sp += 2;
     cycles = 8;
     break;
@@ -3194,7 +3194,7 @@ void lmgb::Cpu::Step() {
   // RET cc
   case 0xc0:
     if (!ZF_GET(af.bytes.l)) {
-      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      pc = btow(mem.Read(sp + 1), mem.Read(sp));
       sp += 2;
       cycles = 20;
       break;
@@ -3203,7 +3203,7 @@ void lmgb::Cpu::Step() {
     break;
   case 0xc8:
     if (ZF_GET(af.bytes.l)) {
-      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      pc = btow(mem.Read(sp + 1), mem.Read(sp));
       sp += 2;
       cycles = 20;
       break;
@@ -3212,7 +3212,7 @@ void lmgb::Cpu::Step() {
     break;
   case 0xd0:
     if (!CF_GET(af.bytes.l)) {
-      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      pc = btow(mem.Read(sp + 1), mem.Read(sp));
       sp += 2;
       cycles = 20;
       break;
@@ -3221,7 +3221,7 @@ void lmgb::Cpu::Step() {
     break;
   case 0xd8:
     if (CF_GET(af.bytes.l)) {
-      pc = btow(mem.Read(sp+1), mem.Read(sp));
+      pc = btow(mem.Read(sp + 1), mem.Read(sp));
       sp += 2;
       cycles = 20;
       break;
@@ -3231,7 +3231,7 @@ void lmgb::Cpu::Step() {
 
   // RETI
   case 0xd9:
-    pc = btow(mem.Read(sp+1), mem.Read(sp));
+    pc = btow(mem.Read(sp + 1), mem.Read(sp));
     sp += 2;
     isInterruptsAvailable = true;
     cycles = 8;
