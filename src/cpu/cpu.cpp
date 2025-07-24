@@ -2990,6 +2990,8 @@ void lmgb::Cpu::Step() {
     if (!ZF_GET(af.bytes.l)) {
       byte ls = mem.Read(pc++);
       pc = btow(mem.Read(pc), ls);
+      cycles = 16;
+      break;
     }
     cycles = 12;
     break;
@@ -2997,6 +2999,8 @@ void lmgb::Cpu::Step() {
     if (ZF_GET(af.bytes.l)) {
       byte ls = mem.Read(pc++);
       pc = btow(mem.Read(pc), ls);
+      cycles = 16;
+      break;
     }
     cycles = 12;
     break;
@@ -3004,6 +3008,8 @@ void lmgb::Cpu::Step() {
     if (!CF_GET(af.bytes.l)) {
       byte ls = mem.Read(pc++);
       pc = btow(mem.Read(pc), ls);
+      cycles = 16;
+      break;
     }
     cycles = 12;
     break;
@@ -3011,6 +3017,8 @@ void lmgb::Cpu::Step() {
     if (CF_GET(af.bytes.l)) {
       byte ls = mem.Read(pc++);
       pc = btow(mem.Read(pc), ls);
+      cycles = 16;
+      break;
     }
     cycles = 12;
     break;
@@ -3033,6 +3041,8 @@ void lmgb::Cpu::Step() {
     if (!ZF_GET(af.bytes.l)) {
       sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
+      cycles = 12;
+      break;
     }
     cycles = 8;
     break;
@@ -3040,6 +3050,8 @@ void lmgb::Cpu::Step() {
     if (ZF_GET(af.bytes.l)) {
       sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
+      cycles = 12;
+      break;
     }
     cycles = 8;
     break;
@@ -3047,6 +3059,8 @@ void lmgb::Cpu::Step() {
     if (!CF_GET(af.bytes.l)) {
       sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
+      cycles = 12;
+      break;
     }
     cycles = 8;
     break;
@@ -3054,6 +3068,8 @@ void lmgb::Cpu::Step() {
     if (CF_GET(af.bytes.l)) {
       sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
+      cycles = 12;
+      break;
     }
     cycles = 8;
     break;
@@ -3076,6 +3092,8 @@ void lmgb::Cpu::Step() {
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
       pc = val;
+      cycles = 24;
+      break;
     }
     cycles = 12;
     break;
@@ -3086,6 +3104,8 @@ void lmgb::Cpu::Step() {
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
       pc = val;
+      cycles = 24;
+      break;
     }
     cycles = 12;
     break;
@@ -3096,6 +3116,8 @@ void lmgb::Cpu::Step() {
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
       pc = val;
+      cycles = 24;
+      break;
     }
     cycles = 12;
     break;
@@ -3106,6 +3128,8 @@ void lmgb::Cpu::Step() {
       mem.Write(--sp, getmsb(pc));
       mem.Write(--sp, getlsb(pc));
       pc = val;
+      cycles = 24;
+      break;
     }
     cycles = 12;
     break;
@@ -3172,6 +3196,8 @@ void lmgb::Cpu::Step() {
     if (!ZF_GET(af.bytes.l)) {
       pc = btow(mem.Read(sp+1), mem.Read(sp));
       sp += 2;
+      cycles = 20;
+      break;
     }
     cycles = 8;
     break;
@@ -3179,6 +3205,8 @@ void lmgb::Cpu::Step() {
     if (ZF_GET(af.bytes.l)) {
       pc = btow(mem.Read(sp+1), mem.Read(sp));
       sp += 2;
+      cycles = 20;
+      break;
     }
     cycles = 8;
     break;
@@ -3186,6 +3214,8 @@ void lmgb::Cpu::Step() {
     if (!CF_GET(af.bytes.l)) {
       pc = btow(mem.Read(sp+1), mem.Read(sp));
       sp += 2;
+      cycles = 20;
+      break;
     }
     cycles = 8;
     break;
@@ -3193,6 +3223,8 @@ void lmgb::Cpu::Step() {
     if (CF_GET(af.bytes.l)) {
       pc = btow(mem.Read(sp+1), mem.Read(sp));
       sp += 2;
+      cycles = 20;
+      break;
     }
     cycles = 8;
     break;
