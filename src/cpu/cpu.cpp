@@ -2,7 +2,7 @@
 
 lmgb::Cpu::Cpu() {
   state = RUNNING;
-  isInterruptsAvailable = true;
+  ime = true;
 
   // initializing registers
   af.pair = 0x11;
@@ -2919,14 +2919,14 @@ void lmgb::Cpu::Step() {
   // DI
   case 0xf3:
     Step();
-    isInterruptsAvailable = false;
+    ime = false;
     cycles = 4;
     break;
 
   // EI
   case 0xfb:
     Step();
-    isInterruptsAvailable = true;
+    ime = true;
     cycles = 4;
     break;
 
@@ -3233,7 +3233,7 @@ void lmgb::Cpu::Step() {
   case 0xd9:
     pc = btow(mem.Read(sp + 1), mem.Read(sp));
     sp += 2;
-    isInterruptsAvailable = true;
+    ime = true;
     cycles = 8;
     break;
   }

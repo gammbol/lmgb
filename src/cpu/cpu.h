@@ -71,7 +71,7 @@ public:
   lmgb::Memory mem;
 
   CpuState state;
-  bool isInterruptsAvailable;
+  bool ime;
 
   Cpu();
   // ~Cpu();
