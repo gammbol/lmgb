@@ -1,9 +1,12 @@
 # LM GameBoy Emulator
 
 ## Tasks
-    - Emulate CPU
-    - Emulate RAM
-    - Emulate I/O
+    - [x] Emulate CPU
+    - [x] Emulate RAM 
+    - [ ] Emulate Interrupts
+    - [ ] Emulate MBC
+    - [ ] Emulate Synchronization
+
 
 ## Tech Stack
     - C++
