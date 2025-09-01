@@ -76,9 +76,10 @@ public:
   Cpu();
   // ~Cpu();
 
+  void pushWord(word val);
+
   byte readOp(word &pc);
   void Step();
-
 };
 } // namespace lmgb
 
