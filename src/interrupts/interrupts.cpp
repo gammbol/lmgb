@@ -1,4 +1,4 @@
-#include <interrupts.h>
+#include "interrupts.h"
 
 /*
 Interrupt			Priority	Start Address
@@ -11,6 +11,6 @@ complete Hi-Lo of P10-P13	5			$0060
 
 void lmgb::Interrupts::Step(lmgb::Cpu &cpu) {
   if ((intf & inte) & 0x1f) {
-    if (cpu.ime)
+    
   }
 }

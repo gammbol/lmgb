@@ -1,8 +1,8 @@
 #ifndef INTERRUPTS_H
 #define INTERRUPTS_H
 
-#include <cpu.h>
-#include <lmgb.h>
+#include "../cpu/cpu.h"
+#include "../lmgb.h"
 
 namespace lmgb {
 

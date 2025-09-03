@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "lmgb.h"
-#include "mem.h"
+#include "../lmgb.h"
+#include "../mem/mem.h"
 
 #define SYNC_WITH_CPU(clockDelta)
 
