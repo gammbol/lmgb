@@ -9,8 +9,8 @@
 #define SYNC_WITH_CPU(clockDelta)
 
 #define getbatpos(a, pos) ((a & (a << pos)) >> pos)
-#define setbatpos(a, pos) (a | (1 << pos))
-#define resetbatpos(a, pos) (a & ~(0 << pos))
+#define setbatpos(a, pos) (a = a | (1 << pos))
+#define resetbatpos(a, pos) (a = a & ~(0 << pos))
 
 #define getmsb(a) ((a & 0xff00) >> 7)
 #define getlsb(a) (a & 0x00ff)
@@ -76,6 +76,7 @@ public:
   Cpu();
   // ~Cpu();
 
+  void pushByte(byte val);
   void pushWord(word val);
 
   byte readOp(word &pc);

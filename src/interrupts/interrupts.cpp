@@ -11,6 +11,28 @@ complete Hi-Lo of P10-P13	5			$0060
 
 void lmgb::Interrupts::Step(lmgb::Cpu &cpu) {
   if ((intf & inte) & 0x1f) {
-    
+    if (cpu.ime) {
+      cpu.ime = false;
+      if (intf & VBLANK) {
+        cpu.pushWord(cpu.pc);
+        cpu.pc = 0x40;
+      }
+      if (intf & LCDC) {
+        cpu.pushWord(cpu.pc);
+        cpu.pc = 0x48;
+      }
+      if (intf & T_OVERFLOW) {
+        cpu.pushWord(cpu.pc);
+        cpu.pc = 0x50;
+      }
+      if (intf & IO_COMPLETE) {
+        cpu.pushWord(cpu.pc);
+        cpu.pc = 0x58;
+      }
+      if (intf & JOYPAD) {
+        cpu.pushWord(cpu.pc);
+        cpu.pc = 0x60;
+      }
+    }
   }
 }
