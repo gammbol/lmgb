@@ -1,5 +1,5 @@
-#ifndef INTERRUPTS_H
-#define INTERRUPTS_H
+#ifndef LMGB_INTERRUPTS_H
+#define LMGB_INTERRUPTS_H
 
 #include "../cpu/cpu.h"
 #include "../lmgb.h"
