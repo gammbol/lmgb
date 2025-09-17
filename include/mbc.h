@@ -13,7 +13,7 @@ class mbc {
   char selectedBank;
 
 public:
-  mbc();
+  mbc(char type, char bank);
 };
 } // namespace lmgb
 

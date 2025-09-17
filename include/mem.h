@@ -1,7 +1,7 @@
 #ifndef MEM_H
 #define MEM_H
 
-#include "../lmgb.h"
+#include "lmgb.h"
 
 #define MEM_LEN 0x10000
 

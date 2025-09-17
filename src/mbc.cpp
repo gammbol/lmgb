@@ -1,3 +1,6 @@
 #include "mbc.h"
 
-lmgb::mbc::mbc() { selectedBank = mem.Read(0x0147); }
+lmgb::mbc::mbc(char type, char bank = 1) {
+  type = type;
+  selectedBank = bank;
+}
