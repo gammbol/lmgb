@@ -3,6 +3,8 @@
 byte lmgb::Memory::Read(word addr) {
   if (addr < 0 || addr > 0xFFFF)
     return 0;
+
+  switch (addr & 0xf000) {}
   return mem[addr];
 }
 

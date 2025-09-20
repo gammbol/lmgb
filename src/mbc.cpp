@@ -1,6 +1,8 @@
 #include "mbc.h"
 
-lmgb::mbc::mbc(char type, char bank = 1) {
-  type = type;
-  selectedBank = bank;
+byte lmgb::mbc::read(word addr) {
+  if (addr < 0 || addr > 0xffff)
+    throw -1;
+
+  return ((addr - 0xa000) + (selectedBank * RAMBankSize)) % 0xdfff;
 }
