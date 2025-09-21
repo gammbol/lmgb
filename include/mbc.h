@@ -1,29 +1,36 @@
 #ifndef LMGB_MBC_H
 #define LMGB_MBC_H
 
-#include "mem.h"
+#include "lmgb.h"
 
 namespace lmgb {
 
-const int ROMBankSize = 0x4000;
-const int RAMBankSize = 0x2000;
+const int romBankSize = 0x4000;
+const int ramBankSize = 0x2000;
 
+// TODO: handle no ram scenario
 class mbc {
 public:
-  mbc(byte *ROM, word ROMSize, byte *RAM, word RAMSize)
-      : ROM(ROM), ROMSize(ROMSize), RAM(RAM), RAMSize(RAMSize) {}
+  mbc(word romSize, word ramSize, byte *rom, byte *ram);
 
-  byte read(word addr);
-  byte write(word addr, byte val);
+  virtual byte read(word addr);
+  virtual void write(word addr, byte val);
 
 protected:
-  char selectedBank;
-  byte *ROM; // rom of the game file
-  byte *RAM; // ram of the game file
+  bool ramEnable;
 
-  word ROMSize; // size in blocks
-  word RAMSize; // size in blocks
+  byte selectedRom;
+  byte selectedRam;
+  word romOffset;
+  word ramOffset;
+
+  word romSize; // number of banks
+  word ramSize; // number of banks
+
+  byte *rom;
+  byte *ram;
 };
+
 } // namespace lmgb
 
 #endif
