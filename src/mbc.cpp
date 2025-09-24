@@ -11,7 +11,12 @@ lmgb::mbc::mbc(const word romSize, const word ramSize, byte *rom, byte *ram)
   ramEnable = false;
 }
 
-byte lmgb::mbc::read(const word addr) {
+lmgb::mbc1::mbc1(word romSize, word ramSize, byte *rom, byte *ram)
+    : mbc(romSize, ramSize, rom, ram) {
+  advancedMode = false;
+}
+
+byte lmgb::mbc1::read(const word addr) {
   if (addr < 0 || addr > 0xffff)
     throw std::exception("Invalid address");
 
@@ -37,9 +42,9 @@ byte lmgb::mbc::read(const word addr) {
   }
 }
 
-void lmgb::mbc::write(word addr, byte val) {
+void lmgb::mbc1::write(word addr, byte val) {
   if (addr < 0 || addr > 0xffff)
-    throw std::exception("Invalid addres");
+    throw std::exception("Invalid address");
 
   switch (addr & 0xf000) {
   case 0x0000:
@@ -49,19 +54,22 @@ void lmgb::mbc::write(word addr, byte val) {
 
   case 0x2000:
   case 0x3000:
-    selectedRom = val ? 1 : val & 0x1f;
+    selectedRom = val & 0x1f;
+    if (!advancedMode && selectedRom == 0) {
+      selectedRom = 1;
+    }
+    break;
 
-    // TODO: range validation
   case 0x4000:
   case 0x5000:
-    selectedRom = (val & 0x60) | selectedRom;
+    selectedRom = (val << 5) + selectedRom;
     selectedRam = val & 0x0f;
+    if (advancedMode) {
+      selectedRam = val & 0x0f;
+    }
+    break;
 
   default:
     throw std::exception("Invalid mbc write");
   }
 }
-
-// byte lmgb::mbc2::read(word addr) {
-
-// }

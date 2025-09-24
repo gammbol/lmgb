@@ -31,6 +31,17 @@ protected:
   byte *ram;
 };
 
+class mbc1 : public mbc {
+public:
+  mbc1(word romSize, word ramSize, byte *rom, byte *ram);
+
+  byte read(word addr) override;
+  void write(word addr, byte val) override;
+
+protected:
+  bool advancedMode;
+};
+
 } // namespace lmgb
 
 #endif
