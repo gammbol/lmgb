@@ -2,6 +2,7 @@
 #define LMGB_MBC_H
 
 #include "lmgb.h"
+#include "mbc.h"
 
 namespace lmgb {
 
