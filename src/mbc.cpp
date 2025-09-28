@@ -1,7 +1,5 @@
 #include "mbc.h"
 
-#include <exception>
-
 lmgb::mbc::mbc(const word romSize, const word ramSize, byte *rom, byte *ram)
     : romSize(romSize), ramSize(ramSize), rom(rom), ram(ram) {
   selectedRom = 1;
@@ -35,7 +33,9 @@ byte lmgb::mbc1::read(const word addr) {
 
   case 0xa000:
   case 0xb000:
-    return ram[addr - 0xa000 + ramOffset];
+    if (ramEnable) {
+      return ram[addr - 0xa000 + ramOffset];
+    }
 
   default:
     throw std::exception("Invalid mbc read");

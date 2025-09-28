@@ -2,6 +2,7 @@
 #define LMGB_H
 
 #include <cstdint>
+#include <exception>
 
 #undef byte
 #undef word
