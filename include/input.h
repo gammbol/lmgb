@@ -8,6 +8,18 @@
 #include "lmgb.h"
 
 namespace lmgb {
+
+enum LMGB_INPUT_BUTTONS {
+  RIGHT_KEY,
+  LEFT_KEY,
+  UP_KEY,
+  DOWN_KEY,
+  A_BTN,
+  B_BTN,
+  SELECT_BTN,
+  START_BTN
+};
+
 class input {
 private:
   bool selectButtons;
@@ -33,6 +45,7 @@ private:
 public:
   input() : selectButtons(false), selectDPad(false), buttons(0) {}
   bool isButtonPressed() const;
+
 };
 } // namespace lmgb
 

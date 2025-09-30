@@ -2,7 +2,6 @@
 #define LMGB_MBC_H
 
 #include "lmgb.h"
-#include "mbc.h"
 
 namespace lmgb {
 
@@ -12,7 +11,14 @@ const int ramBankSize = 0x2000;
 // TODO: handle no ram scenario
 class mbc {
 public:
-  mbc(word romSize, word ramSize, byte *rom, byte *ram);
+  mbc(word romSize, word ramSize, byte *rom, byte *ram)
+      : romSize(romSize), ramSize(ramSize), rom(rom), ram(ram) {
+    selectedRom = 1;
+    selectedRam = 0;
+    romOffset = selectedRam * romBankSize;
+    ramOffset = selectedRam * ramBankSize;
+    ramEnable = false;
+  }
 
   virtual byte read(word addr);
   virtual void write(word addr, byte val);
@@ -30,17 +36,11 @@ protected:
 
   byte *rom;
   byte *ram;
-};
 
-class mbc1 : public mbc {
-public:
-  mbc1(word romSize, word ramSize, byte *rom, byte *ram);
+  virtual byte *loadRom(const char *path);
+  virtual byte *loadRam(const char *path);
 
-  byte read(word addr) override;
-  void write(word addr, byte val) override;
-
-protected:
-  bool advancedMode;
+  virtual void *saveRam(const char *path);
 };
 
 } // namespace lmgb

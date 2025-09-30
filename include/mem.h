@@ -1,13 +1,14 @@
-#ifndef MEM_H
-#define MEM_H
+#ifndef LMGB_MEM_H
+#define LMGB_MEM_H
 
 #include "lmgb.h"
+#include "mbc.h"
 
 #define MEM_LEN 0x10000
 
 namespace lmgb {
 class Memory {
-  byte mem[MEM_LEN];
+  mbc mbc;
 
 public:
   byte Read(word addr);
