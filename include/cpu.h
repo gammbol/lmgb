@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "lmgb.h"
+#include "defs.h"
 #include "mem.h"
 
 #define SYNC_WITH_CPU(clockDelta)
@@ -61,19 +61,19 @@ union WordRegister {
 
 enum CpuState { RUNNING, HALTED, STOPPED };
 
-class Cpu {
+class cpu {
 private:
   void getBit(const byte reg, int pos);
 
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
-  lmgb::Memory mem;
+  mem mem;
 
   CpuState state;
   bool ime;
 
-  Cpu();
+  cpu();
   // ~Cpu();
 
   void pushByte(byte val);

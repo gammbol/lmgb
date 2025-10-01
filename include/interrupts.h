@@ -2,7 +2,7 @@
 #define LMGB_INTERRUPTS_H
 
 #include "cpu.h"
-#include "lmgb.h"
+#include "defs.h"
 
 namespace lmgb {
 
@@ -17,12 +17,13 @@ enum INT_TYPE {
   JOYPAD = 0x10
 };
 
-class Interrupts {
+class interrupts {
 private:
   byte inte, intf;
 
 public:
-  void Step(lmgb::Cpu &cpu);
+  void requestInterrupt(INT_TYPE type);
+  void Step(lmgb::cpu &cpu);
 };
 
 } // namespace lmgb

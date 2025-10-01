@@ -1,7 +1,7 @@
 #ifndef LMGB_MBC_H
 #define LMGB_MBC_H
 
-#include "lmgb.h"
+#include "defs.h"
 
 namespace lmgb {
 
@@ -20,8 +20,8 @@ public:
     ramEnable = false;
   }
 
-  virtual byte read(word addr);
-  virtual void write(word addr, byte val);
+  virtual byte read(word addr) = 0;
+  virtual void write(word addr, byte val) = 0;
 
 protected:
   bool ramEnable;
@@ -37,10 +37,10 @@ protected:
   byte *rom;
   byte *ram;
 
-  virtual byte *loadRom(const char *path);
-  virtual byte *loadRam(const char *path);
+  virtual byte *loadRom(const char *path) = 0;
+  virtual byte *loadRam(const char *path) = 0;
 
-  virtual void *saveRam(const char *path);
+  virtual void saveRam(const char *path) = 0;
 };
 
 } // namespace lmgb

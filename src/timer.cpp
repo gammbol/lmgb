@@ -30,11 +30,12 @@ void lmgb::timer::Step(word c) {
   cycles += c;
 
   // DIV
-  if (cycles % 64 != 0)
-    div++;
+  // if (cycles % 64 != 0)
+  //   div++;
+  div = cycles % 64;
 
   // TIMA
   // TODO: call an interrupt on the overflow
-  if (isTacEnabled() && cycles % getCS() != 0)
-    isOverflow(tima) ? tima = tma : tima++;
+  if (isTacEnabled())
+    tima = isOverflow(tima) ? tma : cycles % getCS();
 }

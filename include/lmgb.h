@@ -1,15 +1,25 @@
 #ifndef LMGB_H
 #define LMGB_H
 
-#include <cstdint>
-#include <exception>
+// definitions
+#include "defs.h"
 
-#undef byte
-#undef word
+// gameboy elements
+#include "cpu.h"
+#include "interrupts.h"
+#include "timer.h"
 
-#define sbyte int8_t
+namespace lmgb {
+class gb {
+  lmgb::cpu cpu;
+  friend class lmgb::cpu;
 
-#define byte uint8_t
-#define word uint16_t
+  lmgb::interrupts interrupts;
+  friend class lmgb::interrupts;
+
+  lmgb::timer timer;
+  friend class lmgb::timer;
+};
+} // namespace lmgb
 
 #endif

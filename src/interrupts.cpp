@@ -9,7 +9,9 @@ $0050 Serial Transfer		4			$0058 - when transfer is
 complete Hi-Lo of P10-P13	5			$0060
 */
 
-void lmgb::Interrupts::Step(lmgb::Cpu &cpu) {
+void lmgb::interrupts::requestInterrupt(INT_TYPE type) { intf |= type; }
+
+void lmgb::interrupts::Step(lmgb::cpu &cpu) {
   if ((intf & inte) & 0x1f) {
     if (cpu.ime) {
       cpu.ime = false;

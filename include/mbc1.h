@@ -66,6 +66,10 @@ public:
 
 protected:
   bool advancedMode;
+
+  byte *loadRom(const char *path) override { return 0; }
+  byte *loadRam(const char *path) override { return 0; }
+  void saveRam(const char *path) override {}
 };
 } // namespace lmgb
 

@@ -5,7 +5,7 @@
 #ifndef LMGB_INPUT_H
 #define LMGB_INPUT_H
 
-#include "lmgb.h"
+#include "defs.h"
 
 namespace lmgb {
 
@@ -45,7 +45,6 @@ private:
 public:
   input() : selectButtons(false), selectDPad(false), buttons(0) {}
   bool isButtonPressed() const;
-
 };
 } // namespace lmgb
 

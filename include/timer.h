@@ -1,7 +1,7 @@
 #ifndef LMGB_TIMER_H
 #define LMGB_TIMER_H
 
-#include "lmgb.h"
+#include "defs.h"
 
 #define isOverflow(a) ((int)(a + 1) > 0xffff)
 

@@ -1,6 +1,7 @@
 #include "cpu.h"
 
-lmgb::Cpu::Cpu() {
+lmgb::cpu::cpu() : mem() {
+
   state = RUNNING;
   ime = true;
 
@@ -47,20 +48,28 @@ lmgb::Cpu::Cpu() {
   mem.Write(0xffff, 0x00);
 }
 
-byte lmgb::Cpu::readOp(word &pc) {
+void lmgb::cpu::pushByte(byte val) { mem.Write(--sp, val); }
+
+// TODO: sync with clock
+void lmgb::cpu::pushWord(word val) {
+  pushByte((val & 0xff00) >> 7);
+  pushByte(val & 0x00ff);
+}
+
+byte lmgb::cpu::readOp(word &pc) {
   byte opcode = mem.Read(pc);
   pc++;
   return opcode;
 }
 
-void lmgb::Cpu::getBit(const byte reg, int pos) {
+void lmgb::cpu::getBit(const byte reg, int pos) {
   byte bit = getbatpos(reg, pos);
   ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
   NF_RESET(af.bytes.l);
   HF_SET(af.bytes.l);
 }
 
-void lmgb::Cpu::Step() {
+void lmgb::cpu::Step() {
   // TODO: redo opcode reading function
   byte opcode = readOp(pc);
   char cycles = 0;

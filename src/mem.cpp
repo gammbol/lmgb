@@ -1,6 +1,6 @@
 #include "mem.h"
 
-byte lmgb::Memory::Read(word addr) {
+byte lmgb::mem::Read(word addr) {
   switch (addr & 0xf000) {
   case 0x0000:
   case 0x1000:
@@ -16,7 +16,7 @@ byte lmgb::Memory::Read(word addr) {
   }
 }
 
-void lmgb::Memory::Write(word addr, byte val) {
+void lmgb::mem::Write(word addr, byte val) {
   switch (addr & 0xf000) {
   case 0x0000:
   case 0x1000:
