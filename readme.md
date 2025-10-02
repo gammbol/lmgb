@@ -1,16 +1,20 @@
 # LM GameBoy Emulator
 
 ## Tasks
+The main task is pretty simple: i just wanna play gb games on my own emulator :)
+
+Here are some essential tasks:
+
     - [x] Emulate CPU
     - [x] Emulate RAM 
-    - [ ] Emulate Interrupts
-    - [ ] Emulate MBC
+    - [x] Emulate Interrupts
+    - [x] Emulate MBC
     - [ ] Emulate Synchronization
 
 
 ## Tech Stack
     - C++
-    - SDL
+    - OpenGL
     - CMake
 
 ## Sources
