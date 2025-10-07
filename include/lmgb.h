@@ -1,9 +1,6 @@
 #ifndef LMGB_H
 #define LMGB_H
 
-// definitions
-#include "defs.h"
-
 // gameboy elements
 #include "cpu.h"
 #include "interrupts.h"
@@ -11,14 +8,12 @@
 
 namespace lmgb {
 class gb {
+
+  // i'm not sure why i even made these classes friend,
+  // so i deleted it away
   lmgb::cpu cpu;
-  friend class lmgb::cpu;
-
   lmgb::interrupts interrupts;
-  friend class lmgb::interrupts;
-
   lmgb::timer timer;
-  friend class lmgb::timer;
 };
 } // namespace lmgb
 

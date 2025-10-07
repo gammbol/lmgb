@@ -45,6 +45,7 @@ private:
 public:
   input() : selectButtons(false), selectDPad(false), buttons(0) {}
   bool isButtonPressed() const;
+  void setButtonPressed(LMGB_INPUT_BUTTONS input);
 };
 } // namespace lmgb
 

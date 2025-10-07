@@ -1,4 +1,5 @@
 #include "timer.h"
+#include "interrupts.h"
 
 short lmgb::timer::getCS() {
   switch (tac & 0b11) {
@@ -26,7 +27,7 @@ void lmgb::timer::write(word addr) {
   }
 }
 
-void lmgb::timer::Step(word c) {
+void lmgb::timer::Step(word c, interrupts interrupt) {
   cycles += c;
 
   // DIV
@@ -35,7 +36,13 @@ void lmgb::timer::Step(word c) {
   div = cycles % 64;
 
   // TIMA
-  // TODO: call an interrupt on the overflow
-  if (isTacEnabled())
-    tima = isOverflow(tima) ? tma : cycles % getCS();
+  if (isTacEnabled()) {
+    if (isOverflow(tima)) {
+      tima = tma;
+      interrupt.requestInterrupt(T_OVERFLOW);
+      return;
+    }
+    tima = cycles % getCS();
+  }
+  // tima = isOverflow(tima) ? tma : cycles % getCS();
 }

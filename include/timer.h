@@ -2,6 +2,7 @@
 #define LMGB_TIMER_H
 
 #include "defs.h"
+#include "interrupts.h"
 
 #define isOverflow(a) ((int)(a + 1) > 0xffff)
 
@@ -26,7 +27,7 @@ public:
 
   void write(word addr);
 
-  void Step(word c);
+  void Step(word c, interrupts interrupt);
 };
 } // namespace lmgb
 
