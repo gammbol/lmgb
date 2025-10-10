@@ -12,10 +12,10 @@
 
 namespace lmgb {
 class mem {
-  mbc1 mbc;
+  mbc *mbc;
 
 public:
-  mem() : mbc(0, 0, nullptr, nullptr) {}
+  mem();
   byte Read(word addr);
   void Write(word addr, byte val);
 };

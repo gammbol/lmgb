@@ -6,10 +6,7 @@
 namespace lmgb {
 class mbc1 : public mbc {
 public:
-  mbc1(word romSize, word ramSize, byte *rom, byte *ram)
-      : mbc(romSize, ramSize, rom, ram) {
-    advancedMode = false;
-  }
+  mbc1() { advancedMode = false; }
 
   byte read(word addr) override {
     switch (addr & 0xf000) {

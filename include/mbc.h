@@ -11,31 +11,25 @@ const int ramBankSize = 0x2000;
 // TODO: handle no ram scenario
 class mbc {
 public:
-  mbc(word romSize, word ramSize, byte *rom, byte *ram)
-      : romSize(romSize), ramSize(ramSize), rom(rom), ram(ram) {
-    selectedRom = 1;
-    selectedRam = 0;
-    romOffset = selectedRam * romBankSize;
-    ramOffset = selectedRam * ramBankSize;
-    ramEnable = false;
-  }
+  // mbc() = delete;
+  // virtual ~mbc() = 0;
 
   virtual byte read(word addr) = 0;
   virtual void write(word addr, byte val) = 0;
 
 protected:
-  bool ramEnable;
+  bool ramEnable = false;
 
-  byte selectedRom;
-  byte selectedRam;
-  word romOffset;
-  word ramOffset;
+  byte selectedRom = 0;
+  byte selectedRam = 0;
+  word romOffset = 0;
+  word ramOffset = 0;
 
-  word romSize; // number of banks
-  word ramSize; // number of banks
+  word romSize = 0; // number of banks
+  word ramSize = 0; // number of banks
 
-  byte *rom;
-  byte *ram;
+  byte *rom = nullptr;
+  byte *ram = nullptr;
 
   virtual byte *loadRom(const char *path) = 0;
   virtual byte *loadRam(const char *path) = 0;
