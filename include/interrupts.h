@@ -22,6 +22,8 @@ private:
   byte inte, intf;
 
 public:
+  interrupts();
+
   void requestInterrupt(INT_TYPE type);
   void Step(lmgb::cpu &cpu);
 };

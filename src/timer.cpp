@@ -1,7 +1,15 @@
 #include "timer.h"
 #include "interrupts.h"
 
-short lmgb::timer::getCS() {
+lmgb::timer::timer() {
+  cycles = 0;
+  div = 0;
+  tima = 0;
+  tma = 0;
+  tac = 0;
+}
+
+short lmgb::timer::getCS() const {
   switch (tac & 0b11) {
   case 0b00:
     return 256;
@@ -17,17 +25,23 @@ short lmgb::timer::getCS() {
   }
 }
 
-bool lmgb::timer::isTacEnabled() { return (tac & 0x04) >> 2; }
+bool lmgb::timer::isTacEnabled() const { return (tac & 0x04) >> 2; }
 
-void lmgb::timer::write(word addr) {
-  switch (addr) {
-  case 0xff04:
+void lmgb::timer::write(const word addr, const byte value) {
+  switch (addr & 0x00ff) {
+  case 0x04:
     div = 0;
     break;
+  case 0x06:
+    tma = value;
+    break;
+  case 0x07:
+    tac = value & 0x03;
+  default:;
   }
 }
 
-void lmgb::timer::Step(word c, interrupts interrupt) {
+void lmgb::timer::Step(const word c, interrupts interrupt) {
   cycles += c;
 
   // DIV

@@ -61,11 +61,11 @@ public:
     }
   }
 
-protected:
-  bool advancedMode;
+private:
+  bool advancedMode = false;
 
-  byte *loadRom(const char *path) override { return 0; }
-  byte *loadRam(const char *path) override { return 0; }
+  byte *loadRom(const char *path) override { return nullptr; }
+  byte *loadRam(const char *path) override { return nullptr; }
   void saveRam(const char *path) override {}
 };
 } // namespace lmgb

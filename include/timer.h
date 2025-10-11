@@ -22,10 +22,12 @@ class timer {
   byte div, tima, tma, tac;
 
 public:
-  short getCS();
-  bool isTacEnabled();
+  timer();
 
-  void write(word addr);
+  short getCS() const;
+  bool isTacEnabled() const;
+
+  void write(word addr, byte value);
 
   void Step(word c, interrupts interrupt);
 };
