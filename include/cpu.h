@@ -63,7 +63,7 @@ enum CpuState { RUNNING, HALTED, STOPPED };
 
 class cpu {
 private:
-  void getBit(const byte reg, int pos);
+  void getBit(byte reg, int pos);
 
 public:
   WordRegister af, bc, de, hl;
@@ -78,6 +78,9 @@ public:
 
   void pushByte(byte val);
   void pushWord(word val);
+
+  byte popByte();
+  word popWord();
 
   byte readOp(word &pc);
   void Step();

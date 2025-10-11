@@ -48,13 +48,16 @@ lmgb::cpu::cpu() : mem() {
   mem.Write(0xffff, 0x00);
 }
 
-void lmgb::cpu::pushByte(byte val) { mem.Write(--sp, val); }
+void lmgb::cpu::pushByte(const byte val) { mem.Write(--sp, val); }
 
 // TODO: sync with clock
-void lmgb::cpu::pushWord(word val) {
+void lmgb::cpu::pushWord(const word val) {
   pushByte((val & 0xff00) >> 7);
   pushByte(val & 0x00ff);
 }
+
+byte lmgb::cpu::popByte() { return mem.Read(sp++); }
+word lmgb::cpu::popWord() { return btow(mem.Read(sp++), mem.Read(sp++)); }
 
 byte lmgb::cpu::readOp(word &pc) {
   byte opcode = mem.Read(pc);
@@ -62,8 +65,8 @@ byte lmgb::cpu::readOp(word &pc) {
   return opcode;
 }
 
-void lmgb::cpu::getBit(const byte reg, int pos) {
-  byte bit = getbatpos(reg, pos);
+void lmgb::cpu::getBit(const byte reg, const int pos) {
+  const byte bit = getbatpos(reg, pos);
   ZF_CHECK(bit) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
   NF_RESET(af.bytes.l);
   HF_SET(af.bytes.l);
@@ -493,45 +496,37 @@ void lmgb::cpu::Step() {
 
   // PUSH nn
   case 0xf5:
-    mem.Write(--sp, af.bytes.h);
-    mem.Write(--sp, af.bytes.l);
+    pushWord(af.pair);
     cycles = 16;
     break;
   case 0xc5:
-    mem.Write(--sp, bc.bytes.h);
-    mem.Write(--sp, bc.bytes.l);
+    pushWord(bc.pair);
     cycles = 16;
     break;
   case 0xd5:
-    mem.Write(--sp, de.bytes.h);
-    mem.Write(--sp, de.bytes.l);
+    pushWord(de.pair);
     cycles = 16;
     break;
   case 0xe5:
-    mem.Write(--sp, hl.bytes.h);
-    mem.Write(--sp, hl.bytes.l);
+    pushWord(hl.pair);
     cycles = 16;
     break;
 
   // POP nn
   case 0xf1:
-    af.bytes.l = mem.Read(sp++);
-    af.bytes.h = mem.Read(sp++);
+    af.pair = popWord();
     cycles = 12;
     break;
   case 0xc1:
-    bc.bytes.l = mem.Read(sp++);
-    bc.bytes.h = mem.Read(sp++);
+    bc.pair = popWord();
     cycles = 12;
     break;
   case 0xd1:
-    de.bytes.l = mem.Read(sp++);
-    de.bytes.h = mem.Read(sp++);
+    de.pair = popWord();
     cycles = 12;
     break;
   case 0xe1:
-    hl.bytes.l = mem.Read(sp++);
-    hl.bytes.h = mem.Read(sp++);
+    hl.pair = popWord();
     cycles = 12;
     break;
 
