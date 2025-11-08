@@ -1,6 +1,8 @@
 #ifndef LMGB_GRAPHICS_H
 #define LMGB_GRAPHICS_H
 
+#include <lmgb.h>
+
 #define LINE_LEN 16
 #define HF_LINE_LEN 8
 
@@ -17,6 +19,16 @@ namespace lmgb {
       return res;
     }
   } tileData;
+
+  class VRAM {
+  public:
+    VRAM() = default;
+
+    tileData getTileData(short pos) { return td_[pos]; }
+
+  private:
+    tileData td_[384];
+  };
 }
 
 #endif
