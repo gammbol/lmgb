@@ -20,14 +20,19 @@ namespace lmgb {
     }
   } tileData;
 
+  // VRAM class
   class VRAM {
   public:
     VRAM() = default;
 
-    tileData getTileData(short pos) { return td_[pos]; }
-
   private:
-    tileData td_[384];
+    // Tile Data Blocks
+    tileData tileBlock0[384];
+    tileData tileBlock1[384];
+
+    // Tile Maps
+    byte tileMap0[1024];
+    byte tileMap1[1024];
   };
 }
 
