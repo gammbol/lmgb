@@ -7,6 +7,13 @@
 #define HF_LINE_LEN 8
 
 namespace lmgb {
+  enum PALETTE {
+    WHITE,
+    LGRAY,
+    DGRAY,
+    BLACK
+};
+
   typedef struct tileData {
     byte lsb, msb;
 
@@ -32,7 +39,21 @@ namespace lmgb {
   public:
     graphics() = default;
 
-  private:
+    // writing & reading tileData
+    tileData readTileBlock(byte addr);
+    void writeTileBlock(byte addr, tileData tile);
+
+    // writing & reading tileMap
+    byte readTileMap(word id);
+    byte writeTileMap(word addr, byte id);
+
+    // palette
+    byte getPalette();
+    byte setPalette(PALETTE id0, PALETTE id1, PALETTE id2, PALETTE id3);
+
+  private: 
+    byte palette;
+
     // Tile Data Blocks
     tileData tileBlock0[384];
     tileData tileBlock1[384];
