@@ -20,10 +20,17 @@ namespace lmgb {
     }
   } tileData;
 
+  typedef struct objData {
+    byte posY;
+    byte posX;
+    byte tileIndex;
+    byte Flags;
+  } objAttr;
+
   // VRAM class
-  class VRAM {
+  class graphics {
   public:
-    VRAM() = default;
+    graphics() = default;
 
   private:
     // Tile Data Blocks
@@ -33,6 +40,9 @@ namespace lmgb {
     // Tile Maps
     byte tileMap0[1024];
     byte tileMap1[1024];
+
+    // OAM
+    objAttr oam[40];
   };
 }
 
