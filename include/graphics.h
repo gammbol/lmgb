@@ -10,9 +10,13 @@
 namespace lmgb {
 enum PALETTE { WHITE, LGRAY, DGRAY, BLACK };
 
+// tile structure
+// contains 16 bytes for the whole tile
 typedef struct tileData {
   byte tileBytes[16];
 
+  // getting color indices for a line
+  // first line = 0
   word getLine(byte line) {
     if (line < 0 || line > LINES_PER_TILE - 1)
       return 0;
@@ -43,12 +47,15 @@ public:
   void writeTileBlock(byte addr, tileData tile);
 
   // writing & reading tileMap
-  byte readTileMap(word id);
+  byte readTileMap(word addr);
   byte writeTileMap(word addr, byte id);
 
   // palette
   byte getPalette();
-  byte setPalette(PALETTE id0, PALETTE id1, PALETTE id2, PALETTE id3);
+  byte setPalette(PALETTE id1, PALETTE id2,
+                  PALETTE id3); // id0 is always transparent
+
+  void Step();
 
 private:
   byte palette;
