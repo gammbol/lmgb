@@ -8,6 +8,17 @@
 #define HF_LINE_LEN 8
 
 namespace lmgb {
+enum LCDCONTROL {
+  ENABLE = 0x80,
+  WINDOW_TILEMAP = 0x40,
+  WINDOW_ENABLE = 0x20,
+  BGWIN_AREA = 0x10,
+  BG_TILEMAP = 0x08,
+  OBJ_SIZE = 0x04,
+  OBJ_ENABLE = 0x02,
+  BGWIN_PRIORITY = 0x01
+};
+
 enum PALETTE { WHITE, LGRAY, DGRAY, BLACK };
 
 // tile structure
@@ -48,17 +59,21 @@ public:
 
   // writing & reading tileMap
   byte readTileMap(word addr);
-  byte writeTileMap(word addr, byte id);
+  void writeTileMap(word addr, byte id);
 
   // palette
-  byte getPalette();
-  byte setPalette(PALETTE id1, PALETTE id2,
+  void setPalette(PALETTE id1, PALETTE id2,
                   PALETTE id3); // id0 is always transparent
+
+  // LCDC
+  bool getLCDCParam(LCDCONTROL parameter);
+  void setLCDCParam(LCDCONTROL parameter, bool value, bool reset);
 
   void Step();
 
 private:
-  byte palette;
+  PALETTE palette[4];
+  byte LCDC; // LCD Control
 
   // Tile Data Blocks
   tileData tileBlock0[128];
