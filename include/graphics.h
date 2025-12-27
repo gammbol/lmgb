@@ -2,6 +2,7 @@
 #define LMGB_GRAPHICS_H
 
 #include <lmgb.h>
+#include <mem.h>
 
 #define LINES_PER_TILE 8
 #define LINE_LEN 16
@@ -45,6 +46,7 @@ typedef struct tileData {
 
 class sprite {
 public:
+  sprite() = default;
   sprite(byte posy, byte posx, byte tileindex, byte flags)
       : posY(posy), posX(posx), tileIndex(tileindex), flags(flags) {}
 
@@ -60,6 +62,8 @@ private:
 // VRAM class
 class graphics {
 public:
+  graphics(mem *memory) : memory(memory) {}
+
   // writing & reading tileData
   tileData readTileBlock(byte addr);
   void writeTileBlock(byte addr, tileData tile);
@@ -79,6 +83,8 @@ public:
   void Step();
 
 private:
+  mem *memory;
+
   PALETTE palette[4];
   byte LCDC; // LCD Control
 
