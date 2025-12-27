@@ -1,4 +1,4 @@
-#include "lmgb.h"
+#include <lmgb.h>
 
 int main() {
   std::cout << "Hello, LMGB!" << std::endl;

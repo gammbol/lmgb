@@ -1,5 +1,5 @@
-#include "timer.h"
-#include "interrupts.h"
+#include <interrupts.h>
+#include <timer.h>
 
 lmgb::timer::timer() {
   cycles = 0;

@@ -1,5 +1,19 @@
 #include <graphics.h>
 
+// get sprite attribute
+byte lmgb::sprite::getAttribute(lmgb::ATTRS attr) {
+  switch (attr) {
+  case POSY:
+    return posY;
+  case POSX:
+    return posX;
+  case TILEINDEX:
+    return tileIndex;
+  case FLAGS:
+    return flags;
+  }
+}
+
 // TileMap section
 byte lmgb::graphics::readTileMap(word addr) {
   // TODO: check smth to choose the right tilemap
@@ -26,7 +40,7 @@ bool lmgb::graphics::getLCDCParam(lmgb::LCDCONTROL parameter) {
 void lmgb::graphics::setLCDCParam(lmgb::LCDCONTROL parameter, bool value,
                                   bool reset) {
   if (reset)
-    LCDC = LCDC & parameter;
+    LCDC = LCDC & ~parameter;
   else
     LCDC = LCDC | parameter;
 }

@@ -1,4 +1,4 @@
-#include "cpu.h"
+#include <cpu.h>
 
 lmgb::cpu::cpu() : mem() {
 

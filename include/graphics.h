@@ -19,6 +19,8 @@ enum LCDCONTROL {
   BGWIN_PRIORITY = 0x01
 };
 
+enum ATTRS { POSY, POSX, TILEINDEX, FLAGS };
+
 enum PALETTE { WHITE, LGRAY, DGRAY, BLACK };
 
 // tile structure
@@ -41,18 +43,23 @@ typedef struct tileData {
   }
 } tileData;
 
-typedef struct objData {
+class sprite {
+public:
+  sprite(byte posy, byte posx, byte tileindex, byte flags)
+      : posY(posy), posX(posx), tileIndex(tileindex), flags(flags) {}
+
+private:
+  byte getAttribute(ATTRS attr);
+
   byte posY;
   byte posX;
   byte tileIndex;
-  byte Flags;
-} objAttr;
+  byte flags;
+};
 
 // VRAM class
 class graphics {
 public:
-  graphics() = default;
-
   // writing & reading tileData
   tileData readTileBlock(byte addr);
   void writeTileBlock(byte addr, tileData tile);
@@ -75,6 +82,11 @@ private:
   PALETTE palette[4];
   byte LCDC; // LCD Control
 
+  // LCD Status
+  byte LY;
+  byte LYC;
+  byte STAT;
+
   // Tile Data Blocks
   tileData tileBlock0[128];
   tileData tileBlock1[128];
@@ -85,7 +97,7 @@ private:
   byte tileMap1[1024];
 
   // OAM
-  objAttr oam[40];
+  sprite oam[40];
 };
 } // namespace lmgb
 
