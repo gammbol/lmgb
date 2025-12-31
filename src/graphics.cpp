@@ -14,6 +14,23 @@ byte lmgb::sprite::getAttribute(lmgb::ATTRS attr) {
   }
 }
 
+void lmgb::sprite::setAttribute(lmgb::ATTRS attr, byte val) {
+  switch (attr) {
+  case POSY:
+    posY = val;
+    break;
+  case POSX:
+    posX = val;
+    break;
+  case TILEINDEX:
+    tileIndex = val;
+    break;
+  case FLAGS:
+    flags = val;
+    break;
+  }
+}
+
 // TileMap section
 byte lmgb::graphics::readTileMap(word addr) {
   // TODO: check smth to choose the right tilemap
@@ -44,3 +61,19 @@ void lmgb::graphics::setLCDCParam(lmgb::LCDCONTROL parameter, bool value,
   else
     LCDC = LCDC | parameter;
 }
+
+void lmgb::graphics::DMATransfer(word addr) {
+    word startAddr = addr & 0xff00;
+    word endAddr = startAddr + 0x009f;
+
+    if (((addr & 0xff00) >> 8) > 0xdf)
+      return;
+
+    for (int i = startAddr; i < endAddr; i += 4) {
+      oam[i/4] = sprite();
+      oam[i/4].setAttribute(POSY, memory->Read(i));
+      oam[i/4].setAttribute(POSX, memory->Read(i + 1));
+      oam[i/4].setAttribute(TILEINDEX, memory->Read(i + 2));
+      oam[i/4].setAttribute(FLAGS, memory->Read(i + 3));
+    }
+  }

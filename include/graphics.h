@@ -50,9 +50,9 @@ public:
   sprite(byte posy, byte posx, byte tileindex, byte flags)
       : posY(posy), posX(posx), tileIndex(tileindex), flags(flags) {}
 
-private:
   byte getAttribute(ATTRS attr);
-
+  void setAttribute(ATTRS attr, byte val);
+private:
   byte posY;
   byte posX;
   byte tileIndex;
@@ -79,6 +79,9 @@ public:
   // LCDC
   bool getLCDCParam(LCDCONTROL parameter);
   void setLCDCParam(LCDCONTROL parameter, bool value, bool reset);
+
+  // OAM
+  void DMATransfer(word addr);
 
   void Step();
 
