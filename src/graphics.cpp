@@ -42,11 +42,11 @@ void lmgb::graphics::writeTileMap(word addr, byte id) {
 }
 
 // Palette section
-void lmgb::graphics::setPalette(lmgb::PALETTE id1, lmgb::PALETTE id2,
-                                lmgb::PALETTE id3) {
-  palette[1] = id1;
-  palette[2] = id2;
-  palette[3] = id3;
+void lmgb::graphics::setPalette(lmgb::PALETTE_COLORS id1, lmgb::PALETTE_COLORS id2,
+                                lmgb::PALETTE_COLORS id3) {
+  palette.id1 = id1;
+  palette.id2 = id2;
+  palette.id3 = id3;
 }
 
 // LCDC section

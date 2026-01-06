@@ -22,7 +22,19 @@ enum LCDCONTROL {
 
 enum ATTRS { POSY, POSX, TILEINDEX, FLAGS };
 
-enum PALETTE { WHITE, LGRAY, DGRAY, BLACK };
+enum PALETTE_COLORS { 
+  WHITE = 0x9bbc0f, 
+  LGRAY = 0x8bac0f, 
+  DGRAY = 0x306230, 
+  BLACK = 0x0f380f 
+};
+
+typedef struct palette {
+  const PALETTE_COLORS id0 = WHITE;
+  PALETTE_COLORS id1;
+  PALETTE_COLORS id2;
+  PALETTE_COLORS id3;
+} palette;
 
 // tile structure
 // contains 16 bytes for the whole tile
@@ -73,8 +85,8 @@ public:
   void writeTileMap(word addr, byte id);
 
   // palette
-  void setPalette(PALETTE id1, PALETTE id2,
-                  PALETTE id3); // id0 is always transparent
+  void setPalette(PALETTE_COLORS id1, PALETTE_COLORS id2,
+                  PALETTE_COLORS id3); // id0 is always transparent
 
   // LCDC
   bool getLCDCParam(LCDCONTROL parameter);
@@ -88,7 +100,7 @@ public:
 private:
   mem *memory;
 
-  PALETTE palette[4];
+  palette palette;
   byte LCDC; // LCD Control
 
   // LCD Status
