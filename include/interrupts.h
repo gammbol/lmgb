@@ -25,7 +25,7 @@ public:
   interrupts();
 
   void requestInterrupt(INT_TYPE type);
-  void Step(lmgb::cpu &cpu);
+  void step(int steps, lmgb::cpu &cpu);
 };
 
 } // namespace lmgb

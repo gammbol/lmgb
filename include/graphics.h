@@ -105,7 +105,7 @@ public:
   // OAM
   void DMATransfer(word addr);
 
-  void Step();
+  void step(int steps);
 
 private:
   PPUSTATE state;

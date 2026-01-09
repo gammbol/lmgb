@@ -16,7 +16,7 @@ lmgb::interrupts::interrupts() {
 
 void lmgb::interrupts::requestInterrupt(INT_TYPE type) { intf |= type; }
 
-void lmgb::interrupts::Step(lmgb::cpu &cpu) {
+void lmgb::interrupts::step(int steps, lmgb::cpu &cpu) {
   if ((intf & inte) & 0x1f) {
     if (cpu.ime) {
       cpu.ime = false;
