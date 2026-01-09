@@ -9,6 +9,14 @@
 #define HF_LINE_LEN 8
 
 namespace lmgb {
+enum PPUSTATE {
+  MODE0,
+  MODE1,
+  MODE2,
+  MODE3
+};
+
+
 enum LCDCONTROL {
   ENABLE = 0x80,
   WINDOW_TILEMAP = 0x40,
@@ -26,11 +34,12 @@ enum PALETTE_COLORS {
   WHITE = 0x9bbc0f, 
   LGRAY = 0x8bac0f, 
   DGRAY = 0x306230, 
-  BLACK = 0x0f380f 
+  BLACK = 0x0f380f,
+  TRANSPARENT
 };
 
 typedef struct palette {
-  const PALETTE_COLORS id0 = WHITE;
+  PALETTE_COLORS id0;
   PALETTE_COLORS id1;
   PALETTE_COLORS id2;
   PALETTE_COLORS id3;
@@ -74,7 +83,21 @@ private:
 // VRAM class
 class graphics {
 public:
-  graphics(mem *memory) : memory(memory) {}
+  graphics(mem *memory) : memory(memory) {
+    // BG palette init
+    BGPalette.id0 = WHITE;
+    BGPalette.id1 = LGRAY;
+    BGPalette.id2 = DGRAY;
+    BGPalette.id3 = BLACK;
+
+    // OBJ palettes init
+    for (int i = 0; i < 2; i++) {
+      OBJPalettes[i].id0 = TRANSPARENT;
+      OBJPalettes[i].id1 = LGRAY;
+      OBJPalettes[i].id2 = DGRAY;
+      OBJPalettes[i].id3 = BLACK;
+    }
+  }
 
   // writing & reading tileData
   tileData readTileBlock(byte addr);
@@ -98,9 +121,20 @@ public:
   void Step();
 
 private:
+  PPUSTATE state;
+
   mem *memory;
 
-  palette palette;
+  // Background position
+  byte SYC;
+  byte SCX;
+
+  // Window position
+  byte WY;
+  byte WX;
+
+  palette BGPalette;
+  palette OBJPalettes[2];
   byte LCDC; // LCD Control
 
   // LCD Status
