@@ -30,6 +30,12 @@ enum LCDCONTROL {
 
 enum ATTRS { POSY, POSX, TILEINDEX, FLAGS };
 
+enum PALETTES {
+  BGP,
+  OBP0,
+  OBP1
+};
+
 enum PALETTE_COLORS { 
   WHITE = 0x9bbc0f, 
   LGRAY = 0x8bac0f, 
@@ -38,12 +44,6 @@ enum PALETTE_COLORS {
   TRANSPARENT
 };
 
-typedef struct palette {
-  PALETTE_COLORS id0;
-  PALETTE_COLORS id1;
-  PALETTE_COLORS id2;
-  PALETTE_COLORS id3;
-} palette;
 
 // tile structure
 // contains 16 bytes for the whole tile
@@ -85,35 +85,22 @@ class graphics {
 public:
   graphics(mem *memory) : memory(memory) {
     // BG palette init
-    BGPalette.id0 = WHITE;
-    BGPalette.id1 = LGRAY;
-    BGPalette.id2 = DGRAY;
-    BGPalette.id3 = BLACK;
+    BGPalette[0] = WHITE;
+    BGPalette[1] = LGRAY;
+    BGPalette[2] = DGRAY;
+    BGPalette[3] = BLACK;
 
     // OBJ palettes init
     for (int i = 0; i < 2; i++) {
-      OBJPalettes[i].id0 = TRANSPARENT;
-      OBJPalettes[i].id1 = LGRAY;
-      OBJPalettes[i].id2 = DGRAY;
-      OBJPalettes[i].id3 = BLACK;
+      OBJPalettes[i][0] = TRANSPARENT;
+      OBJPalettes[i][1] = LGRAY;
+      OBJPalettes[i][2] = DGRAY;
+      OBJPalettes[i][3] = BLACK;
     }
   }
 
-  // writing & reading tileData
-  tileData readTileBlock(byte addr);
-  void writeTileBlock(byte addr, tileData tile);
-
-  // writing & reading tileMap
-  byte readTileMap(word addr);
-  void writeTileMap(word addr, byte id);
-
-  // palette
-  void setPalette(PALETTE_COLORS id1, PALETTE_COLORS id2,
-                  PALETTE_COLORS id3); // id0 is always transparent
-
-  // LCDC
-  bool getLCDCParam(LCDCONTROL parameter);
-  void setLCDCParam(LCDCONTROL parameter, bool value, bool reset);
+  // palettes
+  void setPalette(PALETTES plt, byte val);
 
   // OAM
   void DMATransfer(word addr);
@@ -133,8 +120,9 @@ private:
   byte WY;
   byte WX;
 
-  palette BGPalette;
-  palette OBJPalettes[2];
+  PALETTE_COLORS BGPalette[4];
+  PALETTE_COLORS OBJPalettes[2][4];
+  
   byte LCDC; // LCD Control
 
   // LCD Status
