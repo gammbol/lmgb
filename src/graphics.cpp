@@ -63,17 +63,17 @@ void lmgb::graphics::setLCDCParam(lmgb::LCDCONTROL parameter, bool value,
 }
 
 void lmgb::graphics::DMATransfer(word addr) {
-    word startAddr = addr & 0xff00;
-    word endAddr = startAddr + 0x009f;
+  word startAddr = addr & 0xff00;
+  word endAddr = startAddr + 0x009f;
 
-    if (((addr & 0xff00) >> 8) > 0xdf)
-      return;
+  if (((addr & 0xff00) >> 8) > 0xdf)
+    return;
 
-    for (int i = startAddr; i < endAddr; i += 4) {
-      oam[i/4] = sprite();
-      oam[i/4].setAttribute(POSY, memory->Read(i));
-      oam[i/4].setAttribute(POSX, memory->Read(i + 1));
-      oam[i/4].setAttribute(TILEINDEX, memory->Read(i + 2));
-      oam[i/4].setAttribute(FLAGS, memory->Read(i + 3));
-    }
+  for (int i = startAddr; i < endAddr; i += 4) {
+    oam[i/4] = sprite();
+    oam[i/4].setAttribute(POSY, memory->Read(i));
+    oam[i/4].setAttribute(POSX, memory->Read(i + 1));\
+    oam[i/4].setAttribute(TILEINDEX, memory->Read(i + 2));
+    oam[i/4].setAttribute(FLAGS, memory->Read(i + 3));
   }
+}

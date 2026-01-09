@@ -114,8 +114,9 @@ private:
   tileData tileBlock2[128];
 
   // Tile Maps
-  byte tileMap0[1024];
-  byte tileMap1[1024];
+  // made them 2d for the better accessing
+  byte tileMap0[32][32];
+  byte tileMap1[32][32];
 
   // OAM
   sprite oam[40];
