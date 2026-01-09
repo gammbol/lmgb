@@ -9,6 +9,12 @@
 #define HF_LINE_LEN 8
 
 namespace lmgb {
+
+// PPU MODES
+// MODE0 - Horizontal Blank
+// MODE1 - Vertical Blank
+// MODE2 - OAM Scan
+// MODE3 - Drawind Pixels
 enum PPUSTATE {
   MODE0,
   MODE1,
