@@ -15,13 +15,7 @@ namespace lmgb {
 // MODE1 - Vertical Blank
 // MODE2 - OAM Scan
 // MODE3 - Drawind Pixels
-enum PPUSTATE {
-  MODE0,
-  MODE1,
-  MODE2,
-  MODE3
-};
-
+enum PPUSTATE { MODE0, MODE1, MODE2, MODE3 };
 
 enum LCDCONTROL {
   ENABLE = 0x80,
@@ -36,20 +30,15 @@ enum LCDCONTROL {
 
 enum ATTRS { POSY, POSX, TILEINDEX, FLAGS };
 
-enum PALETTES {
-  BGP,
-  OBP0,
-  OBP1
-};
+enum PALETTES { BGP, OBP0, OBP1 };
 
-enum PALETTE_COLORS { 
-  WHITE = 0x9bbc0f, 
-  LGRAY = 0x8bac0f, 
-  DGRAY = 0x306230, 
+enum PALETTE_COLORS {
+  WHITE = 0x9bbc0f,
+  LGRAY = 0x8bac0f,
+  DGRAY = 0x306230,
   BLACK = 0x0f380f,
   TRANSPARENT
 };
-
 
 // tile structure
 // contains 16 bytes for the whole tile
@@ -79,6 +68,7 @@ public:
 
   byte getAttribute(ATTRS attr);
   void setAttribute(ATTRS attr, byte val);
+
 private:
   byte posY;
   byte posX;
@@ -111,10 +101,11 @@ public:
   // OAM
   void DMATransfer(word addr);
 
-  void step(int steps);
+  void step(int ticks);
 
 private:
   PPUSTATE state;
+  int ticks_left;
 
   mem *memory;
 
@@ -128,7 +119,7 @@ private:
 
   PALETTE_COLORS BGPalette[4];
   PALETTE_COLORS OBJPalettes[2][4];
-  
+
   byte LCDC; // LCD Control
 
   // LCD Status

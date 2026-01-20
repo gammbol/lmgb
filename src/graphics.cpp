@@ -95,3 +95,18 @@ void lmgb::sprite::setAttribute(lmgb::ATTRS attr, byte val) {
     break;
   }
 }
+
+void lmgb::graphics::step(int ticks) {
+  switch (state) {
+  case MODE0:
+    break;
+  case MODE1:
+    break;
+  case MODE2:
+    break;
+  case MODE3:
+    break;
+  }
+
+  ticks_left -= ticks;
+}
