@@ -1,6 +1,6 @@
 #include <lmgb.h>
 
-int main() {
+int notmain() {
   std::cout << "Hello, LMGB!" << std::endl;
   return 0;
 }
