@@ -68,7 +68,7 @@ private:
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
-  mem mem;
+  lmgb::mem mem;
 
   CpuState state;
   bool ime;

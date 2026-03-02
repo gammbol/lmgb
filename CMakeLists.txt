@@ -10,4 +10,4 @@ add_executable(lmgb src/cpu.cpp src/input.cpp src/interrupts.cpp src/lmgb.cpp sr
 
 target_include_directories(lmgb PUBLIC include)
 
-target_link_libraries(lmgb PRIVATE glfw3 glm)
+target_link_libraries(lmgb PRIVATE glfw glm)

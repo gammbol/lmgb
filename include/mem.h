@@ -12,7 +12,7 @@
 
 namespace lmgb {
 class mem {
-  mbc *mbc;
+  lmgb::mbc *mbc;
 
 public:
   mem();
