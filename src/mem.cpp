@@ -1,6 +1,6 @@
 #include <mem.h>
 
-lmgb::mem::mem() { mbc = new mbc1(); }
+lmgb::mem::mem() : mbc(new mbc1()) { }
 
 byte lmgb::mem::Read(word addr) {
   switch (addr & 0xf000) {
@@ -31,6 +31,12 @@ void lmgb::mem::Write(word addr, byte val) {
   case 0xa000:
   case 0xb000:
     mbc->write(addr, val);
+    break;
+  
+  case 0x8000:
+  case 0x9000:
+    // vram
+    break;
 
   default:
     return;
