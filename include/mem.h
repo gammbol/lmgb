@@ -12,27 +12,23 @@
 
 namespace lmgb {
 
-enum MBC_TYPES {
-  ROM_ONLY,
-  MBC1,
-  MBC1_RAM
-};
+enum MBC_TYPES { ROM_ONLY, MBC1, MBC1_RAM };
 
 enum ROM_SIZES {
-  KIB_32,
-  KIB_64,
-  KIB_128,
-  KIB_256,
-  KIB_512
+  ROM_KIB_32,
+  ROM_KIB_64,
+  ROM_KIB_128,
+  ROM_KIB_256,
+  ROM_KIB_512
 };
 
 enum RAM_SIZES {
-  NO_RAM,
-  UNUSED,
-  KIB_8,
-  KIB_32,
-  KIB_128,
-  KIB_64
+  RAM_NO_RAM,
+  RAM_UNUSED,
+  RAM_KIB_8,
+  RAM_KIB_32,
+  RAM_KIB_128,
+  RAM_KIB_64
 };
 
 class mem {

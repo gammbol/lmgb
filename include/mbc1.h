@@ -1,7 +1,7 @@
 #ifndef LMGB_MBC1_H
 #define LMGB_MBC1_H
 
-#include "mbc.h"
+#include <mbc.h>
 
 namespace lmgb {
 class mbc1 : public mbc {
@@ -16,7 +16,7 @@ private:
 
   byte *loadRom(const char *path) override;
   byte *loadRam(const char *path) override;
-  void saveRam(const char *path) override {}
+  void saveRam(const char *path) override;
 };
 } // namespace lmgb
 

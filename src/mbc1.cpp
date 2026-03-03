@@ -54,7 +54,9 @@ void lmgb::mbc1::write(word addr, byte val) {
   }
 }
 
-// CARTRIDGE LOADING
-byte *lmgb::mbc1::loadRom(const char *path) {
-  
-}
+// CARTRIDGE LOADING/SAVING
+byte *lmgb::mbc1::loadRom(const char *path) { return nullptr; }
+
+byte *lmgb::mbc1::loadRam(const char *path) { return nullptr; }
+
+void lmgb::mbc1::saveRam(const char *path) { return; }

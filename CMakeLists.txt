@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.60)
 project(lmgb VERSION 0.0.0)
 
+set(CMAKE_CXX_STANDARD 17)
+
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/glm)
 
@@ -17,6 +19,7 @@ add_executable(lmgb
   src/shaders.cpp
   src/glad.c
   src/renderer.cpp
+  src/mbc1.cpp
 )
 
 target_include_directories(lmgb PUBLIC include)
