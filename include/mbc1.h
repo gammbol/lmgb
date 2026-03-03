@@ -6,7 +6,14 @@
 namespace lmgb {
 class mbc1 : public mbc {
 public:
-  mbc1() { advancedMode = false; }
+  // unsure about here
+  // real thinking needed
+  mbc1(ROM_SIZES roms, RAM_SIZES rams) : rom_size(roms), ram_size(rams) {
+    advancedMode = false;
+  }
+
+  ROM_SIZES rom_size;
+  RAM_SIZES ram_size;
 
   byte read(word addr) override;
   void write(word addr, byte val) override;

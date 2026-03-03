@@ -1,7 +1,8 @@
 #ifndef LMGB_MBC_H
 #define LMGB_MBC_H
 
-#include "defs.h"
+#include <defs.h>
+#include <enums.h>
 
 namespace lmgb {
 

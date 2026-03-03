@@ -15,10 +15,13 @@ byte lmgb::mbc1::read(word addr) {
     return rom[addr - 0x4000 + romOffset];
 
   case 0xa000:
-  case 0xb000:
+  case 0xb000: {
+    if (ram_size == lmgb::RAM_SIZES::RAM_NO_RAM)
+      return 0xff;
     if (ramEnable) {
       return ram[addr - 0xa000 + ramOffset];
     }
+  }
 
   default:
     return -1;
@@ -47,6 +50,11 @@ void lmgb::mbc1::write(word addr, byte val) {
     if (advancedMode) {
       selectedRam = val & 0x0f;
     }
+    break;
+
+  case 0x6000:
+  case 0x7000:
+    advancedMode = val & 1;
     break;
 
   default:

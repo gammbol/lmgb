@@ -3,6 +3,8 @@
 
 #include <fstream>
 
+#include <enums.h>
+
 // gameboy elements
 #include "cpu.h"
 #include "interrupts.h"
