@@ -19,7 +19,6 @@ add_executable(lmgb
   src/shaders.cpp
   src/glad.c
   src/renderer.cpp
-  src/mbc1.cpp
 )
 
 target_include_directories(lmgb PUBLIC include)

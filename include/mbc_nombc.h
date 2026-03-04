@@ -6,7 +6,8 @@
 namespace lmgb {
 class nombc : public mbc {
 public:
-  nombc(word romSize, word ramSize, byte *rom, byte *ram);
+  nombc(ROM_SIZES rom_size, RAM_SIZES ram_size, std::vector<byte> &rom_data)
+      : mbc(rom_size, ram_size, rom_data) {}
 
   byte read(word addr) override {
     switch (addr & 0xf000) {
@@ -42,10 +43,18 @@ public:
       return;
 
     case 0xa000:
-    case 0xb000:
-      ram[addr] = val;
+    case 0xb000: {
+      if (ramSize != 0)
+        ram[addr] = val;
+      break;
+    }
     }
   }
+
+private:
+  byte *loadRom(const char *path) override { return nullptr; }
+  byte *loadRam(const char *path) override { return nullptr; }
+  void saveRam(const char *path) override { return; }
 };
 } // namespace lmgb
 

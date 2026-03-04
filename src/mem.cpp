@@ -1,6 +1,17 @@
 #include <mem.h>
 
-lmgb::mem::mem() : mbc(new mbc1()) { }
+lmgb::mem::mem(lmgb::MBC_TYPES mbc_type, lmgb::ROM_SIZES rom_size,
+               lmgb::RAM_SIZES ram_size, std::vector<byte> &rom_data) {
+  switch (mbc_type) {
+  case ROM_ONLY:
+    memory_controller = new nombc(rom_size, ram_size, rom_data);
+    break;
+  case MBC1:
+  case MBC1_RAM:
+    memory_controller = new mbc1(rom_size, ram_size, rom_data);
+    break;
+  }
+}
 
 byte lmgb::mem::Read(word addr) {
   switch (addr & 0xf000) {
@@ -11,7 +22,7 @@ byte lmgb::mem::Read(word addr) {
   case 0x4000:
   case 0xa000:
   case 0xb000:
-    return mbc->read(addr);
+    return memory_controller->read(addr);
 
   default:
     return -1;
@@ -30,9 +41,9 @@ void lmgb::mem::Write(word addr, byte val) {
   case 0x7000:
   case 0xa000:
   case 0xb000:
-    mbc->write(addr, val);
+    memory_controller->write(addr, val);
     break;
-  
+
   case 0x8000:
   case 0x9000:
     // vram
