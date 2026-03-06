@@ -3,8 +3,9 @@
 
 #include <iostream>
 
-#include "defs.h"
-#include "mem.h"
+#include <defs.h>
+#include <enums.h>
+#include <mem.h>
 
 #define SYNC_WITH_CPU(clockDelta)
 
@@ -73,7 +74,8 @@ public:
   CpuState state;
   bool ime;
 
-  cpu();
+  cpu(MBC_TYPES mbc_type, ROM_SIZES rom_size, RAM_SIZES ram_size,
+      std::vector<byte> &rom_data);
   // ~Cpu();
 
   void pushByte(byte val);

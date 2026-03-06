@@ -1,6 +1,7 @@
 #include <cpu.h>
 
-lmgb::cpu::cpu() : mem() {
+lmgb::cpu::cpu(MBC_TYPES mbc_type, ROM_SIZES rom_size, RAM_SIZES ram_size,
+      std::vector<byte> &rom_data) : mem(mbc_type, rom_size, ram_size, rom_data) {
 
   state = RUNNING;
   ime = true;
