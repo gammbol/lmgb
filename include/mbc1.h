@@ -56,10 +56,10 @@ public:
 
     case 0x4000:
     case 0x5000:
-      selectedRom = (val << 5) + selectedRom;
-      selectedRam = val & 0x0f;
       if (advancedMode) {
-        selectedRam = val & 0x0f;
+        selectedRam = val & 0x3;
+      } else {
+        selectedRom = (val << 5) + selectedRom;
       }
       break;
 
