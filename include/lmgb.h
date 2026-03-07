@@ -20,10 +20,11 @@ class gb {
 
   std::vector<byte> rom_data;
 
-  lmgb::cpu cpu;
+  lmgb::cpu *cpu;
 
 public:
   gb(const char *path);
+  // ~gb();  
 };
 
 } // namespace lmgb
