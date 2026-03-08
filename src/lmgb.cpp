@@ -69,6 +69,7 @@ lmgb::gb::gb(const char *path) : rom_data() {
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
+  cpu.emplace(mbc_type, rom_size, ram_size, rom_data);
 }
 
 // lmgb::gb::~gb() { delete rom_data; }

@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <vector>
+#include <optional>
 
 #include <enums.h>
 
@@ -20,7 +21,7 @@ class gb {
 
   std::vector<byte> rom_data;
 
-  lmgb::cpu *cpu;
+  std::optional<lmgb::cpu> cpu;
 
 public:
   gb(const char *path);
