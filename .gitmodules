@@ -4,3 +4,6 @@
 [submodule "deps/glm"]
 	path = deps/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "deps/lmshader"]
+	path = deps/lmshader
+	url = git@github.com:gammbol/lmshader
