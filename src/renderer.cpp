@@ -1,44 +1,47 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <vector>
+#include <renderer.h>
 
-#include <shaders.hpp>
-
-const int SCR_WIDTH = 160;
-const int SCR_HEIGHT = 144;
-
-const float POINT_SCALE = 1.0f;
-
-std::vector<float> genPoints();
-std::vector<float> generatePixels160x144();
-
-// i'll leave it like this for now
-// later i'm gonna make it right
-int renderer(int argc, char *argv[]) {
+lmgb::renderer::renderer(char *game_title, char *vs, char *fs) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+  // making the window unresizable
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-  GLFWwindow *window =
-      glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "test", nullptr, nullptr);
+  window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, game_title, nullptr, nullptr);
 
   if (window == nullptr) {
-    std::cout << "failed to create a window" << std::endl;
     glfwTerminate();
-    return -1;
+    throw new std::runtime_error("failed to create a window");
   }
 
   glfwMakeContextCurrent(window);
 
+  // init glad
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "failed to init glad" << std::endl;
-    return -1;
+    glfwTerminate();
+    throw new std::runtime_error("failed to init glad");
   }
 
   glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+  // generating buffers
+  glGenVertexArrays(1, &vao);
+  glGenBuffers(1, &vbo);
+
+  // binding
+  glBindVertexArray(vao);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+}
+
+void lmgb::renderer::render(const byte frambuffer) {
+  
+}
+
+// i'll leave it like this for now
+// later i'm gonna make it right
+int renderer(int argc, char *argv[]) {
+  
 
   // POINTS
   // ----------------------------
@@ -53,7 +56,7 @@ int renderer(int argc, char *argv[]) {
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-  glBufferData(GL_ARRAY_BUFFER, pixels.size() * sizeof(float), pixels.data(),
+  glBufferData(GL_ARRAY_BUFFER, framebuffer.size() * sizeof(float), framebuffer.data(),
                GL_STATIC_DRAW);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void *)0);
   glEnableVertexAttribArray(0);
