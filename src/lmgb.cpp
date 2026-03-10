@@ -62,6 +62,17 @@ lmgb::gb::gb(const char *path) : rom_data() {
   cpu.emplace(mbc_type, rom_size, ram_size, rom_data);
 }
 
+void lmgb::gb::Step() {
+  std::cout << "============ CPU STATE ============" << std::endl;
+  std::cout << "AF: " << std::hex << cpu->af.pair << std::endl;
+  std::cout << "BC: " << std::hex << cpu->bc.pair << std::endl;
+  std::cout << "DE: " << std::hex << cpu->de.pair << std::endl;
+  std::cout << "HL: " << std::hex << cpu->hl.pair << std::endl;
+  std::cout << "===================================" << std::endl;
+
+  cpu->Step();
+}
+
 // lmgb::gb::~gb() { delete rom_data; }
 
 int main(int argc, char *argv[]) {
@@ -73,7 +84,11 @@ int main(int argc, char *argv[]) {
   // TODO: file extension validation
 
   try {
-    lmgb::gb cartridge_state{argv[1]};
+    lmgb::gb console{argv[1]};
+
+    while (true) {
+      console.Step();
+    }
   } catch (std::exception &e) {
     std::cerr << "ERROR: " << e.what() << std::endl;
     return -1;

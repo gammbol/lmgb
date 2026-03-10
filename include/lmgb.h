@@ -25,6 +25,8 @@ class gb {
 
 public:
   gb(const char *path);
+
+  void Step();
 };
 
 } // namespace lmgb
