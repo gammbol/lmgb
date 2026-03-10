@@ -5,12 +5,13 @@
 #include <vector>
 #include <optional>
 
+#include <defs.h>
+
 #include <enums.h>
 
 // gameboy elements
-#include "cpu.h"
-#include "interrupts.h"
-#include "timer.h"
+#include <cpu.h>
+#include <renderer.h>
 
 namespace lmgb {
 class gb {
@@ -21,7 +22,9 @@ class gb {
 
   std::vector<byte> rom_data;
 
-  std::optional<lmgb::cpu> cpu;
+  cpu *cpu;
+  renderer *rndr;
+  
 
 public:
   gb(const char *path);

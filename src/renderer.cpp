@@ -1,5 +1,6 @@
 #include <renderer.h>
 
+// TODO: destructor
 lmgb::renderer::renderer(char *game_title, char *vs, char *fs) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -28,159 +29,55 @@ lmgb::renderer::renderer(char *game_title, char *vs, char *fs) {
   // generating buffers
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
+  glGenTextures(1, &texture);
 
   // binding
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-}
 
-void lmgb::renderer::render(const byte frambuffer) {
-  
-}
-
-// i'll leave it like this for now
-// later i'm gonna make it right
-int renderer(int argc, char *argv[]) {
-  
-
-  // POINTS
-  // ----------------------------
-  std::vector<float> pixels{generatePixels160x144()};
-
-  unsigned int vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  unsigned int vbo;
-  glGenBuffers(1, &vbo);
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-  glBufferData(GL_ARRAY_BUFFER, framebuffer.size() * sizeof(float), framebuffer.data(),
+  // transfering data
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float), vertices,
                GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void *)0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void *)0);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5,
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4,
                         (void *)(sizeof(float) * 2));
   glEnableVertexAttribArray(1);
 
-  shaders shd{"shaders/vertex.vs", "shaders/fragment.fs"};
-  shd.compile_shaders();
-  shd.link_program();
-  shd.use_program();
+  glTexImage2D(
+    GL_TEXTURE_2D,
+    0,
+    GL_RGBA8,        // как хранится в VRAM
+    SCR_WIDTH,
+    SCR_HEIGHT,
+    0,
+    GL_RGBA,         // формат данных
+    GL_UNSIGNED_BYTE,// тип данных
+    nullptr
+  );
+}
 
-  shd.setVec2("uResolution", (float)SCR_WIDTH, (float)SCR_HEIGHT);
-
-  while (!glfwWindowShouldClose(window)) {
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-
-    shd.use_program();
-
-    // glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_POINTS, 0, 160 * 144);
-    // glBindVertexArray(0);
-  }
-
+lmgb::renderer::~renderer() {
+  glDeleteVertexArrays(1, &vao);
+  glDeleteBuffers(1, &vbo);
+  glDeleteTextures(1, &texture);
   glfwTerminate();
-  return 0;
 }
 
-float palette[4] = {
-    1.0f, // 0
-    0.7f, // 1
-    0.4f, // 2
-    0.1f  // 3
-};
+void lmgb::renderer::render(const byte *framebuffer) {
+  glBindTexture(GL_TEXTURE_2D, texture);
 
-uint8_t tile[8][8] = {{1, 1, 1, 1, 1, 1, 1, 1}, {2, 3, 3, 3, 3, 3, 3, 2},
-                      {2, 1, 0, 0, 0, 0, 1, 0}, {2, 1, 0, 0, 1, 0, 0, 1},
-                      {2, 1, 0, 0, 1, 0, 1, 1}, {2, 1, 0, 1, 1, 0, 1, 1},
-                      {3, 1, 0, 0, 1, 0, 0, 1}, {2, 3, 3, 3, 3, 3, 3, 2}};
+  glTexSubImage2D(
+    GL_TEXTURE_2D,
+    0,
+    0,
+    0,
+    SCR_WIDTH,
+    SCR_HEIGHT,
+    GL_RGBA,
+    GL_UNSIGNED_BYTE,
+    framebuffer
+  );
 
-std::vector<float> genPoints() {
-  std::vector<float> pixels;
-  const int scale = 5; // 8 * 5 = 40
-  const int tileSize = 8;
-
-  for (int ty = 0; ty < tileSize; ty++) {
-    for (int tx = 0; tx < tileSize; tx++) {
-      float c = palette[tile[ty][tx]];
-
-      // каждый пиксель → блок scale×scale точек
-      for (int sy = 0; sy < scale; sy++) {
-        for (int sx = 0; sx < scale; sx++) {
-          float x = tx * scale + sx;
-          float y = ty * scale + sy;
-
-          pixels.push_back(x);
-          pixels.push_back(y);
-          pixels.push_back(c);
-          pixels.push_back(c);
-          pixels.push_back(c);
-        }
-      }
-    }
-  }
-
-  return pixels;
-}
-
-std::vector<float> generatePixels160x144() {
-  const int W = 160;
-  const int H = 144;
-
-  std::vector<float> pixels;
-  pixels.reserve(W * H * 5);
-
-  // центр и радиусы
-  const float cx = W / 2.0f;
-  const float cy = H / 2.0f;
-  const float R = 50.0f;
-  const float rButton = 8.0f;
-
-  for (int y = 0; y < H; y++) {
-    for (int x = 0; x < W; x++) {
-      float dx = x - cx;
-      float dy = y - cy;
-      float dist = std::sqrt(dx * dx + dy * dy);
-
-      float r = 0.85f;
-      float g = 0.85f;
-      float b = 0.85f; // фон
-
-      if (dist <= R) {
-        // чёрный контур
-        if (dist > R - 2.0f) {
-          r = g = b = 0.0f;
-        }
-        // кнопка
-        else if (std::sqrt(dx * dx + dy * dy) < rButton) {
-          r = g = b = 0.9f;
-        }
-        // горизонтальная линия
-        else if (std::abs(dy) < 2.0f) {
-          r = g = b = 0.0f;
-        }
-        // верхняя половина
-        else if (dy < 0) {
-          r = 0.9f;
-          g = 0.1f;
-          b = 0.1f;
-        }
-        // нижняя половина
-        else {
-          r = g = b = 0.95f;
-        }
-      }
-
-      pixels.push_back((float)x);
-      pixels.push_back((float)y);
-      pixels.push_back(r);
-      pixels.push_back(g);
-      pixels.push_back(b);
-    }
-  }
-
-  return pixels;
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
