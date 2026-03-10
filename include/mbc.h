@@ -65,7 +65,7 @@ public:
       break;
     }
   }
-  // virtual ~mbc() = 0;
+  virtual ~mbc() {}
 
   virtual byte read(word addr) = 0;
   virtual void write(word addr, byte val) = 0;

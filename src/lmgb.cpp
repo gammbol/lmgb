@@ -33,39 +33,29 @@ lmgb::gb::gb(const char *path) : rom_data() {
   }
 
   // reserving space for rom_data vector
-  std::cout << (int)mbc_type << std::endl;
-  std::cout << (int)rom_size << std::endl;
-  std::cout << (int)ram_size << std::endl;
-  std::cout << game_title << std::endl;
   switch (rom_size) {
   case ROM_KIB_32:
-    std::cout << "this game is 32kib" << std::endl;
     rom_data.resize(32 * 1024);
     break;
   case ROM_KIB_64:
-    std::cout << "this game is 64kib" << std::endl;
     rom_data.resize(64 * 1024);
     break;
   case ROM_KIB_128:
-    std::cout << "this game is 128kib" << std::endl;
     rom_data.resize(128 * 1024);
     break;
   case ROM_KIB_256:
-    std::cout << "this game is 256kib" << std::endl;
     rom_data.resize(256 * 1024);
     break;
   case ROM_KIB_512:
-    std::cout << "this game is 512kib" << std::endl;
     rom_data.resize(512 * 1024);
     break;
   }
 
-  std::cout << "SIZE: " << rom_data.size() << std::endl;
 
   // get game file size
-  game_data.seekg(std::ifstream::end);
+  game_data.seekg(0, std::ifstream::end);
   std::streampos file_size = game_data.tellg();
-  game_data.seekg(std::ifstream::beg);
+  game_data.seekg(0, std::ifstream::beg);
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);

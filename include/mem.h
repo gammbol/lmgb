@@ -18,6 +18,7 @@ class mem {
 public:
   mem(MBC_TYPES mbc_type, ROM_SIZES rom_size, RAM_SIZES ram_size,
       std::vector<byte> &rom_data);
+  ~mem();
   byte Read(word addr);
   void Write(word addr, byte val);
 };

@@ -3,6 +3,7 @@
 lmgb::mem::mem(lmgb::MBC_TYPES mbc_type, lmgb::ROM_SIZES rom_size,
                lmgb::RAM_SIZES ram_size, std::vector<byte> &rom_data) {
   switch (mbc_type) {
+  default:
   case ROM_ONLY:
     memory_controller = new nombc(rom_size, ram_size, rom_data);
     break;
@@ -11,6 +12,10 @@ lmgb::mem::mem(lmgb::MBC_TYPES mbc_type, lmgb::ROM_SIZES rom_size,
     memory_controller = new mbc1(rom_size, ram_size, rom_data);
     break;
   }
+}
+
+lmgb::mem::~mem() {
+  delete memory_controller;
 }
 
 byte lmgb::mem::Read(word addr) {
