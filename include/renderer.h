@@ -1,13 +1,11 @@
 #ifndef LMGB_RENDERER_H
 #define LMGB_RENDERER_H
 
-
+#include <defs.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <shaders.hpp>
-
-#include <defs.h>
 
 namespace lmgb {
 
@@ -34,6 +32,7 @@ class renderer {
 
 public:
   renderer(char *game_title, char *vs, char *fs);
+  ~renderer();
 
   void render(const byte *framebuffer);
 };

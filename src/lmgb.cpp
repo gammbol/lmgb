@@ -59,24 +59,24 @@ lmgb::gb::gb(const char *path) : rom_data() {
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
-  cpu = new lmgb::cpu(mbc_type, rom_size, ram_size, rom_data);
+  lmgb_cpu = new lmgb::cpu(mbc_type, rom_size, ram_size, rom_data);
   rndr = new lmgb::renderer(game_title, "shaders/vertex.vs", "shaders/fragment.fs");
 }
 
 void lmgb::gb::Step() {
   std::cout << "============ CPU STATE ============" << std::endl;
-  std::cout << "AF: " << std::hex << cpu->af.pair << std::endl;
-  std::cout << "BC: " << std::hex << cpu->bc.pair << std::endl;
-  std::cout << "DE: " << std::hex << cpu->de.pair << std::endl;
-  std::cout << "HL: " << std::hex << cpu->hl.pair << std::endl;
+  std::cout << "AF: " << std::hex << lmgb_cpu->af.pair << std::endl;
+  std::cout << "BC: " << std::hex << lmgb_cpu->bc.pair << std::endl;
+  std::cout << "DE: " << std::hex << lmgb_cpu->de.pair << std::endl;
+  std::cout << "HL: " << std::hex << lmgb_cpu->hl.pair << std::endl;
   std::cout << "===================================" << std::endl;
 
-  cpu->Step();
+  lmgb_cpu->Step();
 }
 
 // lmgb::gb::~gb() { delete rom_data; }
 lmgb::gb::~gb() {
-  delete cpu;
+  delete lmgb_cpu;
   delete rndr;
 }
 

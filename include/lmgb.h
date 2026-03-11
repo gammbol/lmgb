@@ -5,8 +5,6 @@
 #include <vector>
 #include <optional>
 
-#include <defs.h>
-
 #include <enums.h>
 
 // gameboy elements
@@ -20,14 +18,15 @@ class gb {
   ROM_SIZES rom_size;
   RAM_SIZES ram_size;
 
-  std::vector<byte> rom_data;
+  std::vector<lmgb::byte> rom_data;
 
-  cpu *cpu;
+  cpu *lmgb_cpu;
   renderer *rndr;
   
 
 public:
   gb(const char *path);
+  ~gb();
 
   void Step();
 };

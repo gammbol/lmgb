@@ -3,12 +3,17 @@
 
 #include <cstdint>
 
+namespace lmgb {
+
 #undef byte
 #undef word
 
 #define sbyte int8_t
 
-#define byte uint8_t
-#define word uint16_t
+typedef uint8_t byte;
+typedef uint16_t word;
+
+};
+
 
 #endif

@@ -1,7 +1,7 @@
 #include <cpu.h>
 
 lmgb::cpu::cpu(lmgb::MBC_TYPES mbc_type, lmgb::ROM_SIZES rom_size, lmgb::RAM_SIZES ram_size,
-      std::vector<byte> &rom_data) : mem(mbc_type, rom_size, ram_size, rom_data) {
+      std::vector<lmgb::byte> &rom_data) : mem(mbc_type, rom_size, ram_size, rom_data) {
 
   state = RUNNING;
   ime = true;
@@ -57,10 +57,10 @@ void lmgb::cpu::pushWord(const word val) {
   pushByte(val & 0x00ff);
 }
 
-byte lmgb::cpu::popByte() { return mem.Read(sp++); }
-word lmgb::cpu::popWord() { return btow(mem.Read(sp++), mem.Read(sp++)); }
+lmgb::byte lmgb::cpu::popByte() { return mem.Read(sp++); }
+lmgb::word lmgb::cpu::popWord() { return btow(mem.Read(sp++), mem.Read(sp++)); }
 
-byte lmgb::cpu::readOp(word &pc) {
+lmgb::byte lmgb::cpu::readOp(word &pc) {
   byte opcode = mem.Read(pc);
   pc++;
   return opcode;

@@ -18,7 +18,7 @@ lmgb::mem::~mem() {
   delete memory_controller;
 }
 
-byte lmgb::mem::Read(word addr) {
+lmgb::byte lmgb::mem::Read(word addr) {
   switch (addr & 0xf000) {
   case 0x0000:
   case 0x1000:

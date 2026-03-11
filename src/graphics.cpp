@@ -66,7 +66,7 @@ void lmgb::graphics::setPalette(PALETTES plt, byte val) {
 }
 
 // get sprite attribute
-byte lmgb::sprite::getAttribute(lmgb::ATTRS attr) {
+lmgb::byte lmgb::sprite::getAttribute(lmgb::ATTRS attr) {
   switch (attr) {
   case POSY:
     return posY;

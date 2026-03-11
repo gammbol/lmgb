@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.60)
 project(lmgb VERSION 0.0.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/glm)
@@ -13,11 +13,8 @@ file(COPY shaders DESTINATION .)
 
 add_executable(lmgb 
   src/cpu.cpp 
-  src/input.cpp 
-  src/interrupts.cpp 
   src/lmgb.cpp 
   src/mem.cpp 
-  src/timer.cpp 
   src/graphics.cpp
   src/glad.c
   src/renderer.cpp
