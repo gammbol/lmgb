@@ -103,6 +103,9 @@ public:
 
   void step(int ticks);
 
+  byte read(word addr);
+  void write(word addr, byte val);
+
 private:
   PPUSTATE state;
   int ticks_left;

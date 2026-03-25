@@ -64,12 +64,14 @@ lmgb::gb::gb(const char *path) : rom_data() {
 }
 
 void lmgb::gb::Step() {
+#ifdef LMGB_DEBUG
   std::cout << "============ CPU STATE ============" << std::endl;
   std::cout << "AF: " << std::hex << lmgb_cpu->af.pair << std::endl;
   std::cout << "BC: " << std::hex << lmgb_cpu->bc.pair << std::endl;
   std::cout << "DE: " << std::hex << lmgb_cpu->de.pair << std::endl;
   std::cout << "HL: " << std::hex << lmgb_cpu->hl.pair << std::endl;
   std::cout << "===================================" << std::endl;
+#endif
 
   lmgb_cpu->Step();
 }
