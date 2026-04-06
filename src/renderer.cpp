@@ -1,7 +1,9 @@
 #include <renderer.h>
 
 // TODO: destructor
-lmgb::renderer::renderer(char *game_title, char *vs, char *fs) {
+lmgb::renderer::renderer(lmgb::mem *memory, char *game_title, char *vs,
+                         char *fs)
+    : memory(memory) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -9,7 +11,8 @@ lmgb::renderer::renderer(char *game_title, char *vs, char *fs) {
 
   // making the window unresizable
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-  window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, game_title, nullptr, nullptr);
+  window =
+      glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, game_title, nullptr, nullptr);
 
   if (window == nullptr) {
     glfwTerminate();
@@ -44,17 +47,12 @@ lmgb::renderer::renderer(char *game_title, char *vs, char *fs) {
                         (void *)(sizeof(float) * 2));
   glEnableVertexAttribArray(1);
 
-  glTexImage2D(
-    GL_TEXTURE_2D,
-    0,
-    GL_RGBA8,        // как хранится в VRAM
-    SCR_WIDTH,
-    SCR_HEIGHT,
-    0,
-    GL_RGBA,         // формат данных
-    GL_UNSIGNED_BYTE,// тип данных
-    nullptr
-  );
+  glTexImage2D(GL_TEXTURE_2D, 0,
+               GL_RGBA8, // как хранится в VRAM
+               SCR_WIDTH, SCR_HEIGHT, 0,
+               GL_RGBA,          // формат данных
+               GL_UNSIGNED_BYTE, // тип данных
+               nullptr);
 }
 
 lmgb::renderer::~renderer() {
@@ -67,17 +65,8 @@ lmgb::renderer::~renderer() {
 void lmgb::renderer::render(const byte *framebuffer) {
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  glTexSubImage2D(
-    GL_TEXTURE_2D,
-    0,
-    0,
-    0,
-    SCR_WIDTH,
-    SCR_HEIGHT,
-    GL_RGBA,
-    GL_UNSIGNED_BYTE,
-    framebuffer
-  );
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_RGBA,
+                  GL_UNSIGNED_BYTE, framebuffer);
 
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }

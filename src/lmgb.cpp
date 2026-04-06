@@ -51,7 +51,6 @@ lmgb::gb::gb(const char *path) : rom_data() {
     break;
   }
 
-
   // get game file size
   game_data.seekg(0, std::ifstream::end);
   std::streampos file_size = game_data.tellg();
@@ -59,8 +58,10 @@ lmgb::gb::gb(const char *path) : rom_data() {
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
-  lmgb_cpu = new lmgb::cpu(mbc_type, rom_size, ram_size, rom_data);
-  rndr = new lmgb::renderer(game_title, "shaders/vertex.vs", "shaders/fragment.fs");
+  memory = new lmgb::mem(mbc_type, rom_size, ram_size, rom_data);
+  lmgb_cpu = new lmgb::cpu(memory);
+  rndr = new lmgb::renderer(game_title, "shaders/vertex.vs",
+                            "shaders/fragment.fs");
 }
 
 void lmgb::gb::Step() {

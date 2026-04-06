@@ -2,8 +2,8 @@
 #define LMGB_H
 
 #include <fstream>
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include <enums.h>
 
@@ -20,9 +20,9 @@ class gb {
 
   std::vector<lmgb::byte> rom_data;
 
+  mem *memory;
   cpu *lmgb_cpu;
   renderer *rndr;
-  
 
 public:
   gb(const char *path);

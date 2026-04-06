@@ -69,13 +69,12 @@ private:
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
-  lmgb::mem mem;
+  lmgb::mem *mem;
 
   CpuState state;
   bool ime;
 
-  cpu(MBC_TYPES mbc_type, ROM_SIZES rom_size, RAM_SIZES ram_size,
-      std::vector<byte> &rom_data);
+  cpu(lmgb::mem *memory);
   // ~Cpu();
 
   void pushByte(byte val);

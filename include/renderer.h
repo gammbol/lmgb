@@ -2,9 +2,10 @@
 #define LMGB_RENDERER_H
 
 #include <defs.h>
+#include <mem.h>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <shaders.hpp>
 
 namespace lmgb {
@@ -14,11 +15,9 @@ class renderer {
   const int SCR_HEIGHT = 144;
 
   float vertices[16] = {
-    // position   // texture
-    -1.0f, -1.0f, 0.0f, 0.0f,
-     1.0f, -1.0f, 1.0f, 0.0f,
-    -1.0f,  1.0f, 0.0f, 1.0f,
-     1.0f,  1.0f, 1.0f, 1.0f,
+      // position   // texture
+      -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f,
+      -1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
   };
 
   GLFWwindow *window;
@@ -30,13 +29,15 @@ class renderer {
   // texture buffer
   unsigned int texture;
 
+  mem *memory;
+
 public:
-  renderer(char *game_title, char *vs, char *fs);
+  renderer(mem *memory, char *game_title, char *vs, char *fs);
   ~renderer();
 
   void render(const byte *framebuffer);
 };
 
-};
+}; // namespace lmgb
 
 #endif
