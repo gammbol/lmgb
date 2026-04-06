@@ -15,23 +15,40 @@ const unsigned black = 0x000003;
 
 } // namespace pcolors
 
+const unsigned short MAX_DOTS = 456;
+
+// PPU Modes
+enum ppu_modes {
+  HBLANK,
+  VBLANK,
+  SCANNING,
+  DRAWING
+};
+
 class tiles {
   byte bytes[16]{};
 
 public:
   // byte operations
-  void setByte(byte line, bool isFirst);
-  byte getByte(byte line, bool isFirst);
+  void setByte(byte bt, byte val);
+  byte getByte(byte bt);
 
   word composeLine(byte line);
 };
 
 class graphics {
+  // mode
+  ppu_modes mode{};
+
+  // ticks
+  unsigned current_ticks{};
+  unsigned last_drawing_ticks{};
+
   // gb palette data
-  byte bgp[4]{};
+  byte bgp{};
 
   // obj palette 0,1 data
-  byte objbgp[2][4]{};
+  byte obp[2]{};
 
   // tile data
   tiles tileBlock[3][128]{};
@@ -54,8 +71,10 @@ class graphics {
   // window position
   byte wy{}, wx{};
 
+  void switchMode();
+
 public:
-  void Step();
+  void Step(int steps);
 
   byte read(word addr);
   void write(word addr, byte val);
