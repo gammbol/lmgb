@@ -60,7 +60,7 @@ lmgb::gb::gb(const char *path) : rom_data() {
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
   memory = new lmgb::mem(mbc_type, rom_size, ram_size, rom_data);
   lmgb_cpu = new lmgb::cpu(memory);
-  rndr = new lmgb::renderer(game_title, "shaders/vertex.vs",
+  rndr = new lmgb::renderer(memory, game_title, "shaders/vertex.vs",
                             "shaders/fragment.fs");
 }
 

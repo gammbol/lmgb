@@ -4,8 +4,8 @@
 #include <defs.h>
 #include <mem.h>
 
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <shaders.hpp>
 
 namespace lmgb {

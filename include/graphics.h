@@ -31,7 +31,7 @@ class graphics {
   byte bgp[4]{};
 
   // obj palette 0,1 data
-  byte bgp[2][4]{};
+  byte objbgp[2][4]{};
 
   // tile data
   tiles tileBlock[3][128]{};
