@@ -32,7 +32,7 @@ class renderer {
   mem *memory;
 
 public:
-  renderer(mem *memory, char *game_title, char *vs, char *fs);
+  renderer(mem *memory, char *game_title, char const *vs, char const *fs);
   ~renderer();
 
   void render(const byte *framebuffer);

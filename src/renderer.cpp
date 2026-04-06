@@ -1,8 +1,8 @@
 #include <renderer.h>
 
 // TODO: destructor
-lmgb::renderer::renderer(lmgb::mem *memory, char *game_title, char *vs,
-                         char *fs)
+lmgb::renderer::renderer(lmgb::mem *memory, char *game_title, char const *vs,
+                         char const *fs)
     : memory(memory) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

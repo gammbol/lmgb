@@ -12,6 +12,9 @@
 #include <renderer.h>
 
 namespace lmgb {
+char const  *vertex_path = "shaders/vertex.vs";
+char const  *fragment_path = "shaders/fragment.fs";
+
 class gb {
   char game_title[16];
   MBC_TYPES mbc_type;
