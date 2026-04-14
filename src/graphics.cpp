@@ -124,9 +124,9 @@ void lmgb::graphics::write(word addr, byte val) {
     lyc = val;
     break;
   case 0xff46:
-    dma_src = val;
+    dma_src = val & 0xff00;
+    dma_cur = 0;
     isDmaTransfer = true;
-    dmaTransferred = 0;
     break;
   case 0xff47:
     bgp = val;

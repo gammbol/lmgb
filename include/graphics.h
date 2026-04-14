@@ -57,10 +57,8 @@ class graphics {
   byte tileMap[2][1024]{};
 
   // oam dma transfer
-  byte dma_src{};
-  bool isDmaTransfer{false};
-  // TODO: decide wether to count transferred chunks or cycles
-  byte dmaTransferred{};   
+  byte dma_src{}, dma_cur{};
+  bool isDmaTransfer{false}; 
 
   // object attribute memory
   byte oam[40][4]{};
@@ -84,6 +82,8 @@ public:
 
   byte read(word addr);
   void write(word addr, byte val);
+
+  bool dmaTransferStatus() { return isDmaTransfer; };
 };
 
 } // namespace lmgb
