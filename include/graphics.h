@@ -56,6 +56,12 @@ class graphics {
   // tileMap
   byte tileMap[2][1024]{};
 
+  // oam dma transfer
+  byte dma_src{};
+  bool isDmaTransfer{false};
+  // TODO: decide wether to count transferred chunks or cycles
+  byte dmaTransferred{};   
+
   // object attribute memory
   byte oam[40][4]{};
 
