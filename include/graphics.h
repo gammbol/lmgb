@@ -77,6 +77,9 @@ class graphics {
 
   void switchMode();
 
+  // framebuffer
+  unsigned framebuffer[160][144]{ transparent };
+
 public:
   void Step(int steps);
 

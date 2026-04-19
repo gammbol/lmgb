@@ -12,6 +12,9 @@ void lmgb::graphics::switchMode() {
   case HBLANK:
     mode = (ly > 143) ? VBLANK : SCANNING;
     break;
+  case VBLANK:
+    mode = SCANNING;
+    break;
   }
 
   current_ticks = 0;
@@ -19,16 +22,20 @@ void lmgb::graphics::switchMode() {
 
 void lmgb::graphics::Step(int steps) {
   for (int i = 0; i < steps; ++i) {
-    ++current_ticks;
     switch(mode) {
     case SCANNING:
       // scanning logic
+      unsigned tileMode = lcdc & 0x04 ? 16 : 8;
+      if (ly < oam[current_ticks][0] && ly > oam[current_ticks][0] - tileMode)
+      ++current_ticks;
       if (current_ticks >= 80) switchMode();
     case DRAWING:
       // drawing logic
+      ++current_ticks;
       if (true) switchMode();
       break;
     case HBLANK:
+      ++current_ticks;
       if (current_ticks >= (376 - last_drawing_ticks)) switchMode();
       break;
     }
