@@ -10,7 +10,12 @@ void lmgb::graphics::switchMode() {
     last_drawing_ticks = current_ticks;
     break;
   case HBLANK:
-    mode = (ly > 143) ? VBLANK : SCANNING;
+    if (ly > 143) {
+      mode = VBLANK;
+    } else {
+      mode = SCANNING;
+      ly++;
+    }
     break;
   case VBLANK:
     mode = SCANNING;
@@ -25,8 +30,11 @@ void lmgb::graphics::Step(int steps) {
     switch(mode) {
     case SCANNING:
       // scanning logic
-      unsigned tileMode = lcdc & 0x04 ? 16 : 8;
-      if (ly < oam[current_ticks][0] && ly > oam[current_ticks][0] - tileMode)
+      auto oblock = oam.get(current_ticks);
+      int tileMode = (lcdc & 0x04) ? 16 : 8;
+      if (ly <= oblock.posy && ly >= oblock.posy - tileMode) {
+        
+      }
       ++current_ticks;
       if (current_ticks >= 80) switchMode();
     case DRAWING:

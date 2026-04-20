@@ -36,6 +36,19 @@ public:
   word composeLine(byte line);
 };
 
+struct oam_obj {
+  byte posy{};
+  byte posx{};
+  byte attributes;
+};
+
+class oam_block {
+  oam_obj oam[40]{};
+
+public:
+  oam_obj get(byte id) { return oam[id%40]; }
+};
+
 class graphics {
   // mode
   ppu_modes mode{};
@@ -61,7 +74,7 @@ class graphics {
   bool isDmaTransfer{false}; 
 
   // object attribute memory
-  byte oam[40][4]{};
+  oam_block oam{};
 
   // LCD control
   byte lcdc{};
