@@ -26,25 +26,28 @@ void lmgb::graphics::switchMode() {
 }
 
 void lmgb::graphics::Step(int steps) {
-  for (int i = 0; i < steps; ++i) {
-    switch(mode) {
+  int stod = steps * 4;
+  while (stod) {
+    switch (mode > 0) {
     case SCANNING:
-      // scanning logic
-      auto oblock = oam.get(current_ticks);
-      int tileMode = (lcdc & 0x04) ? 16 : 8;
-      if (ly <= oblock.posy && ly >= oblock.posy - tileMode) {
-        
+      if (lcdc & 0x02 == 0) break;
+      if (!current_ticks) {
+        for (int i = 0; i < 160; ++i) {
+          scanLine[i] = tileBlock[]
+        }
+      }
+      stod -= 2;
+      oam_obj obj = oam.get(0);
+      byte tileMode = (lcdc & 0x04) ? 16 : 8;
+      if (ly+16 >= obj.posy && ly+16 <= obj.posy+tileMode) {
+
       }
       ++current_ticks;
       if (current_ticks >= 80) switchMode();
-    case DRAWING:
-      // drawing logic
-      ++current_ticks;
-      if (true) switchMode();
       break;
-    case HBLANK:
-      ++current_ticks;
-      if (current_ticks >= (376 - last_drawing_ticks)) switchMode();
+    case DRAWING:
+      stod -= 1;
+
       break;
     }
   }

@@ -5,101 +5,125 @@
 
 namespace lmgb {
 
-// --------- COLORS ---------
-namespace pcolors {
-
-const unsigned transparent = 0x000000;
-const unsigned lgray = 0x000001;
-const unsigned dgray = 0x000002;
-const unsigned black = 0x000003;
-
-} // namespace pcolors
-
-const unsigned short MAX_DOTS = 456;
-
-// PPU Modes
-enum ppu_modes {
-  HBLANK,
-  VBLANK,
-  SCANNING,
-  DRAWING
-};
-
-class tiles {
-  byte bytes[16]{};
+// Palettes
+class palettes {
+  byte bgp_;
+  byte obp_[2];
 
 public:
-  // byte operations
-  void setByte(byte bt, byte val);
-  byte getByte(byte bt);
+  byte get_bgp();
+  void set_bgp(byte val);
 
-  word composeLine(byte line);
+  byte get_obp(byte id);
+  void set_obp(byte id, byte val);
 };
 
-struct oam_obj {
-  byte posy{};
-  byte posx{};
-  byte attributes;
+// Window
+class window {
+public:
+  byte wy;
+  byte wx;
+  byte y_cond;
 };
 
-class oam_block {
-  oam_obj oam[40]{};
+// Background
+class background {
+public:
+  byte scy;
+  byte scx;
+};
+
+// OAM Object
+class oam_obj {
+  byte posy_;
+  byte posx_;
+  byte tileIndex_;
+  byte attrs_;
 
 public:
-  oam_obj get(byte id) { return oam[id%40]; }
+  byte get_posy();
+  
+  byte get_posx();
+
+  byte get_tileIndex();
+
+  byte get_attrs();
 };
 
-class graphics {
-  // mode
-  ppu_modes mode{};
+// Object Attribute Memory
+class oam {
+  oam_obj objects_[40];
 
-  // ticks
-  unsigned current_ticks{};
-  unsigned last_drawing_ticks{};
+public:
+  oam_obj get_obj(byte id);
+  void set_obj(byte id, oam_obj object);
+};
 
-  // gb palette data
-  byte bgp{};
+// Tile Data Format
+class tileData {
+  byte data_[16];
 
-  // obj palette 0,1 data
-  byte obp[2]{};
+public:
+  byte get_byte(byte line, bool fst);
+  void set_byte(byte line, bool fst, byte val);
+};
 
-  // tile data
-  tiles tileBlock[3][128]{};
+// Tile Blocks
+class tileBlocks {
+  tileData blocks_[3][128];
 
-  // tileMap
-  byte tileMap[2][1024]{};
+public:
+  tileData get_block(byte id);
+  void set_block(byte id, tileData block);
+};
 
-  // oam dma transfer
-  byte dma_src{}, dma_cur{};
-  bool isDmaTransfer{false}; 
+// Tile Maps
+class tileMaps {
+  byte maps_[2][1024];
 
-  // object attribute memory
-  oam_block oam{};
+public:
+  byte get_tile(byte map, byte id);
+  void set_tile(byte map, byte id, byte val);
+};
 
-  // LCD control
-  byte lcdc{};
+// LCD
+class lcd {
+  // LCD Control
+  byte lcdc_;
 
   // LCD Status Registers
-  byte ly{}, lyc{}, stat{};
-
-  // LCD scrolling
-  byte scy{}, scx{};
-
-  // window position
-  byte wy{}, wx{};
-
-  void switchMode();
-
-  // framebuffer
-  unsigned framebuffer[160][144]{ transparent };
+  byte lcdy_;
+  byte lyc_;
+  byte stat_;
 
 public:
-  void Step(int steps);
+  byte get_lcdc();
+  void set_lcdc(byte val);
 
+  byte get_lcdy();
+
+  byte get_lyc();
+  void set_lyc(byte val);
+
+  byte get_stat();
+  void set_stat(byte val);
+  
+};
+
+// Pixel Process Unit
+class ppu {
+  lcd lcd_control{};
+  tileMaps tile_maps{};
+  tileBlocks tile_blocks{};
+  oam object_mem{};
+  window wnd{};
+  background bg{};
+
+public:
   byte read(word addr);
   void write(word addr, byte val);
 
-  bool dmaTransferStatus() { return isDmaTransfer; };
+  void step(int ticks);
 };
 
 } // namespace lmgb
