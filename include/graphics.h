@@ -5,30 +5,29 @@
 
 namespace lmgb {
 
+// PPU Mode Enum
+enum PPU_MODE {
+  HBLANK,
+  VBLANK,
+  SCANNING,
+  DRAWING
+};
+
 // Palettes
-class palettes {
-  byte bgp_;
-  byte obp_[2];
-
-public:
-  byte get_bgp();
-  void set_bgp(byte val);
-
-  byte get_obp(byte id);
-  void set_obp(byte id, byte val);
+struct palettes {
+  byte bgp;
+  byte obp[2];
 };
 
 // Window
-class window {
-public:
+struct window {
   byte wy;
   byte wx;
   byte y_cond;
 };
 
 // Background
-class background {
-public:
+struct background {
   byte scy;
   byte scx;
 };
@@ -55,8 +54,12 @@ class oam {
   oam_obj objects_[40];
 
 public:
-  oam_obj get_obj(byte id);
-  void set_obj(byte id, oam_obj object);
+  byte dma_src;
+  byte dma_cur;
+  bool isTransferring;
+
+  byte read(word addr);
+  void write(word addr, byte val);
 };
 
 // Tile Data Format
@@ -73,8 +76,10 @@ class tileBlocks {
   tileData blocks_[3][128];
 
 public:
-  tileData get_block(byte id);
-  void set_block(byte id, tileData block);
+  byte read(word addr);
+  void write(word addr, byte val);
+
+  byte read_by_id(byte id, byte block);
 };
 
 // Tile Maps
@@ -82,31 +87,38 @@ class tileMaps {
   byte maps_[2][1024];
 
 public:
-  byte get_tile(byte map, byte id);
+  byte read(word addr);
+  void write(word addr, byte val);
+
+  byte get_tile(byte map, byte x, byte y);
   void set_tile(byte map, byte id, byte val);
 };
 
 // LCD
 class lcd {
-  // LCD Control
-  byte lcdc_;
+  // LCD Y coordinate
+  byte ly_;
 
-  // LCD Status Registers
-  byte lcdy_;
-  byte lyc_;
-  byte stat_;
+  // Ticks Spent on DRAWING mode
+  unsigned short last_drawing_ticks_;
+  unsigned short current_ticks_;
+
+  // making Pixel Processing Unit
+  // be able to use LY register
+  friend ppu;
 
 public:
-  byte get_lcdc();
-  void set_lcdc(byte val);
+  // LCD Control
+  byte lcdc;
 
-  byte get_lcdy();
+  // LCD Status Registers
+  byte lyc;
+  byte stat;
 
-  byte get_lyc();
-  void set_lyc(byte val);
+  byte get_ly();
 
-  byte get_stat();
-  void set_stat(byte val);
+  PPU_MODE get_mode();
+  void set_mode(PPU_MODE mode);
   
 };
 
@@ -118,6 +130,11 @@ class ppu {
   oam object_mem{};
   window wnd{};
   background bg{};
+  palettes plt{};
+
+  void switchMode();
+
+  unsigned scanLine[160]{};
 
 public:
   byte read(word addr);

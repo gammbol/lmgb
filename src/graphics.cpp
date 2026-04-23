@@ -1,39 +1,42 @@
 #include <graphics.h>
 
-void lmgb::graphics::switchMode() {
-  switch(mode) {
+void lmgb::ppu::switchMode() {
+  switch(lcd_control.get_mode()) {
   case SCANNING: 
-    mode = DRAWING;
+    lcd_control.set_mode(DRAWING);
     break;
   case DRAWING:
-    mode = HBLANK;
-    last_drawing_ticks = current_ticks;
+    lcd_control.set_mode(HBLANK);
+    lcd_control.last_drawing_ticks_ = lcd_control.current_ticks_;
     break;
   case HBLANK:
-    if (ly > 143) {
-      mode = VBLANK;
+    if (lcd_control.ly_ > 143) {
+      lcd_control.set_mode(VBLANK);
     } else {
-      mode = SCANNING;
-      ly++;
+      lcd_control.set_mode(SCANNING);
+      lcd_control.ly_++;
     }
     break;
   case VBLANK:
-    mode = SCANNING;
+    lcd_control.set_mode(SCANNING);
     break;
   }
 
-  current_ticks = 0;
+  lcd_control.current_ticks_ = 0;
 }
 
-void lmgb::graphics::Step(int steps) {
-  int stod = steps * 4;
+void lmgb::ppu::step(int ticks) {
+  int stod = ticks * 4;
   while (stod) {
-    switch (mode > 0) {
+    switch (lcd_control.get_mode() > 0) {
     case SCANNING:
-      if (lcdc & 0x02 == 0) break;
-      if (!current_ticks) {
+      if (lcd_control.lcdc & 0x02 == 0) break;
+      if (!lcd_control.current_ticks_) {
         for (int i = 0; i < 160; ++i) {
-          scanLine[i] = tileBlock[]
+          scanLine[i] = tile_blocks.read_by_id(
+            tile_maps.get_tile(lcd_control.lcdc & 0x08, bg.scx, bg.scy),
+            lcd_control.lcdc & 0x10
+          );
         }
       }
       stod -= 2;
@@ -54,12 +57,12 @@ void lmgb::graphics::Step(int steps) {
 }
 
 // alert! retard code
-lmgb::byte lmgb::graphics::read(word addr) {
+lmgb::byte lmgb::ppu::read(word addr) {
+  auto mode = lcd_control.get_mode();
   // OAM read
   if (addr >= 0xfe00 && addr <= 0xfe9f) {
     if (mode == SCANNING || mode == DRAWING) return 0xff;
-    byte id = addr & 0x00ff;
-    return oam[id/4][id%4];
+    return object_mem.read(addr);
   }
 
   // VRAM read
@@ -68,41 +71,39 @@ lmgb::byte lmgb::graphics::read(word addr) {
 
     // tile blocks
     if (addr < 0x9800) {
-      byte id = addr - 0x8000;
-      return tileBlock[id/2048][id/16].getByte(id%16);
+      return tile_blocks.read(addr);
     }
     // tile maps
     else {
-      byte id = addr - 0x9800;
-      return tileMap[id/1024][id%1024];
+      return tile_maps.read(addr);
     }
   }
 
   // other registers
   switch(addr) {
-  case 0xff40: return lcdc;
-  case 0xff41: return stat;
-  case 0xff42: return scy;
-  case 0xff43: return scx;
-  case 0xff44: return ly;
-  case 0xff45: return lyc;
-  case 0xff46: return dma_src;
-  case 0xff47: return bgp;
-  case 0xff48: return obp[0];
-  case 0xff49: return obp[1];
-  case 0xff4a: return wy;
-  case 0xff4b: return wx;
+  case 0xff40: return lcd_control.lcdc;
+  case 0xff41: return lcd_control.stat;
+  case 0xff42: return bg.scy;
+  case 0xff43: return bg.scx;
+  case 0xff44: return lcd_control.ly_;
+  case 0xff45: return lcd_control.lyc;
+  case 0xff46: return object_mem.dma_src;
+  case 0xff47: return plt.bgp;
+  case 0xff48: return plt.obp[0];
+  case 0xff49: return plt.obp[1];
+  case 0xff4a: return wnd.wy;
+  case 0xff4b: return wnd.wx;
   }
 
   return 0xff;
 }
 
-void lmgb::graphics::write(word addr, byte val) {
+void lmgb::ppu::write(word addr, byte val) {
+  auto mode = lcd_control.get_mode();
   // OAM write
   if (addr >= 0xfe00 && addr <= 0xfe9f) {
     if (mode == SCANNING || mode == DRAWING) return;
-    byte id = addr & 0x00ff;
-    oam[id/4][id%4] = val;
+    object_mem.write(addr, val);
   }
 
   // VRAM write
@@ -111,55 +112,52 @@ void lmgb::graphics::write(word addr, byte val) {
 
     // tile blocks
     if (addr < 0x9800) {
-      byte id = addr - 0x8000;
-      tileBlock[id/2048][id/16].setByte(id%16, val);
+      tile_blocks.write(addr, val);
     }
     // tile maps
     else {
-      byte id = addr - 0x9800;
-      tileMap[id/1024][id%1024] = val;
+      tile_maps.write(addr, val);
     }
   }
 
   // other registers
   switch(addr) {
   case 0xff40: 
-    lcdc = val;
+    lcd_control.lcdc = val;
     break;
   case 0xff41:
-    stat = val;
+    lcd_control.stat = val;
     break;
   case 0xff42:
-    scy = val;
+    bg.scy = val;
     break;
   case 0xff43:
-    scx = val;
+    bg.scx = val;
     break;
   case 0xff44:
-    ly = val;
-    break;
+    return;
   case 0xff45:
-    lyc = val;
+    lcd_control.lyc = val;
     break;
   case 0xff46:
-    dma_src = val & 0xff00;
-    dma_cur = 0;
-    isDmaTransfer = true;
+    object_mem.dma_src = val & 0xff00;
+    object_mem.dma_cur = 0;
+    object_mem.isTransferring = true;
     break;
   case 0xff47:
-    bgp = val;
+    plt.bgp = val;
     break;
   case 0xff48:
-    obp[0] = val;
+    plt.obp[0] = val;
     break;
   case 0xff49:
-    obp[1] = val;
+    plt.obp[1] = val;
     break;
   case 0xff4a:
-    wy = val;
+    wnd.wy = val;
     break;
   case 0xff4b:
-    wx = val;
+    wnd.wx = val;
     break;
   }
 }
