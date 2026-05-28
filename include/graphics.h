@@ -10,6 +10,19 @@ namespace lmgb {
 inline constexpr int SCREEN_WIDTH = 160;
 inline constexpr int SCREEN_HEIGHT = 144;
 
+inline constexpr word LCDC_ADDRESS = 0xff40;
+inline constexpr word STAT_ADDRESS = 0xff41;
+inline constexpr word SCY_ADDRESS = 0xff42;
+inline constexpr word SCX_ADDRESS = 0xff43;
+inline constexpr word LY_ADDRESS = 0xff44;
+inline constexpr word LYC_ADDRESS = 0xff45;
+inline constexpr word WY_ADDRESS = 0xff4a;
+inline constexpr word WX_ADDRESS = 0xff4b;
+
+inline constexpr word BGP_ADDRESS = 0xff47;
+inline constexpr word OBP0_ADDRESS = 0xff48;
+inline constexpr word OBP1_ADDRESS = 0xff49;
+
 inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
     0x9bbc0f,
     0x8bac0f,
@@ -20,7 +33,7 @@ inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
 class dmg_palette {
 public:
     byte read() const;
-    void write(byte value);
+    void write(byte val);
 
     byte shade_id(byte color_id) const;
     std::uint32_t color(byte color_id) const;

@@ -15,6 +15,9 @@ namespace lmgb {
 class mem {
   lmgb::mbc *memory_controller;
 
+  // TODO: finish oam dma
+  void dma_transfer(byte val);
+
 public:
   mem(MBC_TYPES mbc_type, ROM_SIZES rom_size, RAM_SIZES ram_size,
       std::vector<byte> &rom_data);
