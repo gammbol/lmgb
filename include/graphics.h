@@ -1,148 +1,126 @@
 #ifndef LMGB_GRAPHICS_H
 #define LMGB_GRAPHICS_H
 
+#include <array>
+#include <cstdint>
 #include <defs.h>
 
 namespace lmgb {
 
-// PPU Mode Enum
-enum PPU_MODE {
-  HBLANK,
-  VBLANK,
-  SCANNING,
-  DRAWING
+inline constexpr int SCREEN_WIDTH = 160;
+inline constexpr int SCREEN_HEIGHT = 144;
+
+inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
+    0x9bbc0f,
+    0x8bac0f,
+    0x306230,
+    0x0f380f
 };
 
-// Palettes
-struct palettes {
-  byte bgp;
-  byte obp[2];
-};
-
-// Window
-struct window {
-  byte wy;
-  byte wx;
-  byte y_cond;
-};
-
-// Background
-struct background {
-  byte scy;
-  byte scx;
-};
-
-// OAM Object
-class oam_obj {
-  byte posy_;
-  byte posx_;
-  byte tileIndex_;
-  byte attrs_;
-
+class dmg_palette {
 public:
-  byte get_posy();
-  
-  byte get_posx();
+    byte read() const;
+    void write(byte value);
 
-  byte get_tileIndex();
+    byte shade_id(byte color_id) const;
+    std::uint32_t color(byte color_id) const;
 
-  byte get_attrs();
+private:
+    byte reg_{};
 };
 
-// Object Attribute Memory
-class oam {
-  oam_obj objects_[40];
+struct object {
+  byte y{};
+  byte x{};
+  byte tile_index{};
+  byte flags{};
 
-public:
-  byte dma_src;
-  byte dma_cur;
-  bool isTransferring;
+  int screen_x() const;
+  int screen_y() const;
 
-  byte read(word addr);
-  void write(word addr, byte val);
+  bool x_flip() const;
+  bool y_flip() const;
+  bool behind_bg() const;
+  byte palette_id() const;
 };
 
-// Tile Data Format
-class tileData {
-  byte data_[16];
-
-public:
-  byte get_byte(byte line, bool fst);
-  void set_byte(byte line, bool fst, byte val);
-};
-
-// Tile Blocks
-class tileBlocks {
-  tileData blocks_[3][128];
-
-public:
-  byte read(word addr);
-  void write(word addr, byte val);
-
-  byte read_by_id(byte id, byte block);
-};
-
-// Tile Maps
-class tileMaps {
-  byte maps_[2][1024];
-
-public:
-  byte read(word addr);
-  void write(word addr, byte val);
-
-  byte get_tile(byte map, byte x, byte y);
-  void set_tile(byte map, byte id, byte val);
-};
-
-// LCD
-class lcd {
-  // LCD Y coordinate
-  byte ly_;
-
-  // Ticks Spent on DRAWING mode
-  unsigned short last_drawing_ticks_;
-  unsigned short current_ticks_;
-
-  // making Pixel Processing Unit
-  // be able to use LY register
-  friend ppu;
-
-public:
-  // LCD Control
-  byte lcdc;
-
-  // LCD Status Registers
-  byte lyc;
-  byte stat;
-
-  byte get_ly();
-
-  PPU_MODE get_mode();
-  void set_mode(PPU_MODE mode);
-  
-};
-
-// Pixel Process Unit
 class ppu {
-  lcd lcd_control{};
-  tileMaps tile_maps{};
-  tileBlocks tile_blocks{};
-  oam object_mem{};
-  window wnd{};
-  background bg{};
-  palettes plt{};
-
-  void switchMode();
-
-  unsigned scanLine[160]{};
-
 public:
-  byte read(word addr);
+  byte read(word addr) const;
   void write(word addr, byte val);
 
-  void step(int ticks);
+  void step(int cycles);
+
+  bool frame_ready() const;
+  void clear_frame_ready();
+
+  const std::array<std::uint32_t, SCREEN_WIDTH * SCREEN_HEIGHT>& framebuffer() const;
+
+private:
+  byte read_vram(word offset) const;
+  void write_vram(word offset, byte val);
+
+  byte read_oam(word offset) const;
+  void write_oam(word offset, byte val);
+
+  byte read_register(word addr) const;
+  void write_register(word addr, byte val);
+
+  byte bg_window_tile_pixel(byte tile_id, byte x, byte y) const;
+  byte object_tile_pixel(byte tile_id, byte x, byte y) const;
+
+  object read_object(byte index) const;
+
+  bool lcd_enabled() const;
+  bool bg_enabled() const;
+  bool window_enabled() const;
+  bool objects_enabled() const;
+
+  word bg_tile_map_base() const;
+  word window_tile_map_base() const;
+  bool bg_window_unsigned_addressing() const;
+  byte object_height() const;
+
+  void render_scanline();
+  void render_background_line();
+  void render_window_line();
+  void render_object_line();
+
+private:
+  std::array<byte, 0x2000> vram_{};
+  std::array<byte, 0xa0> oam_{};
+
+  byte lcdc_{};
+  byte stat_{};
+
+  byte scy_{};
+  byte scx_{};
+
+  byte ly_{};
+  byte lyc_{};
+
+  dmg_palette bgp_{};
+  dmg_palette obp0_{};
+  dmg_palette obp1_{};
+
+  byte wy_{};
+  byte wx_{};
+
+private:
+  enum class mode {
+    hblank = 0,
+    vblank = 1,
+    oam_scan = 2,
+    drawing = 3
+  };
+
+  mode mode_{mode::oam_scan};
+  int dots_{};
+  bool frame_ready_{};
+
+  std::array<std::uint32_t, SCREEN_WIDTH * SCREEN_HEIGHT> framebuffer_{};
 };
 
-} // namespace lmgb
+}
 
 #endif
