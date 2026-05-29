@@ -1,5 +1,7 @@
 #include <graphics.h>
 #include <cassert>
+#include <vector>
+#include <algorithm>
 
 namespace lmgb {
 
@@ -231,6 +233,70 @@ bool ppu::bg_window_unsigned_addressing() const {
 }
 byte ppu::object_height() const {
   return (lcdc_ & 0x04) != 0 ? 16 : 8;
+}
+
+void ppu::render_scanline() {
+  if (mode_ == mode::vblank) return;
+
+  render_background_line();
+  render_window_line();
+  render_object_line();
+}
+void ppu::render_background_line() {
+  if (!bg_enabled()) return;
+
+  byte height = (ly_ * SCREEN_WIDTH);
+  for (int i = 0; i < SCREEN_WIDTH; ++i) {
+    byte tile_id = read_vram(bg_tile_map_base() + height + i);
+    framebuffer_[height + i] = bg_window_tile_pixel(tile_id, scx_, scy_);
+  }
+}
+void ppu::render_window_line() {
+  if (!window_enabled()) return;
+
+  byte height = (ly_ * SCREEN_WIDTH);
+  for (int i = 0; i < SCREEN_WIDTH; ++i) {
+    byte tile_id = read_vram(window_tile_map_base() + height + i);
+    framebuffer_[height + i] = bg_window_tile_pixel(tile_id, wx_, wy_);
+  }
+}
+void ppu::render_object_line() {
+  if (!objects_enabled()) return;
+
+  byte objects_count{};
+
+  byte height = (ly_ * SCREEN_HEIGHT);
+
+  std::vector<object> objects{};
+  for (int i = 0; i < OAM_COUNT && objects_count < 10; ++i) {
+    object obj = read_object(i);
+    if (
+      obj.screen_y() - object_height() < ly_ &&
+      obj.screen_y() > ly_ &&
+      !obj.behind_bg()
+    ) {
+      objects.push_back(obj);
+      ++objects_count;
+    }
+  }
+
+  std::sort(objects.begin(), objects.end(), [](auto a, auto b) {
+    return a.x < b.x;
+  });
+
+  for (auto obj : objects) {
+    for (int i = 0; i + obj.screen_x() < SCREEN_WIDTH; ++i) {
+      auto color_id = object_tile_pixel(obj.tile_index, obj.x, obj.y);
+      switch(obj.palette_id()) {
+      case 0:
+        framebuffer_[i] = obp0_.color(color_id);
+        break;
+      case 1:
+        framebuffer_[i] = obp1_.color(color_id);
+        break;
+      }
+    }
+  }
 }
 
 

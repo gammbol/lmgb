@@ -23,6 +23,10 @@ inline constexpr word BGP_ADDRESS = 0xff47;
 inline constexpr word OBP0_ADDRESS = 0xff48;
 inline constexpr word OBP1_ADDRESS = 0xff49;
 
+inline constexpr word VRAM_SIZE = 0x2000;
+inline constexpr word OAM_SIZE = 0xa0;
+inline constexpr byte OAM_COUNT = 40;
+
 inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
     0x9bbc0f,
     0x8bac0f,
@@ -100,8 +104,8 @@ private:
   void render_object_line();
 
 private:
-  std::array<byte, 0x2000> vram_{};
-  std::array<byte, 0xa0> oam_{};
+  std::array<byte, VRAM_SIZE> vram_{};
+  std::array<byte, OAM_SIZE> oam_{};
 
   byte lcdc_{};
   byte stat_{};
