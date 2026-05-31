@@ -118,7 +118,16 @@ private:
   std::array<byte, OAM_SIZE> oam_{};
 
   byte lcdc_{};
+
+  bool stat_lyc_selected() const;
+  bool stat_mode2_selected() const;
+  bool stat_mode1_selected() const;
+  bool stat_mode0_selected() const;
+  void stat_update();
+  void stat_check_interrupts();
+
   byte stat_{};
+  bool stat_interrupt_line_{};
 
   byte scy_{};
   byte scx_{};

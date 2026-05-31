@@ -101,6 +101,7 @@ void ppu::step(int cycles) {
     if (dots_ >= OAM_SCAN_LENGTH) {
       dots_ -= OAM_SCAN_LENGTH;
       mode_ = mode::drawing;
+      stat_update();
     }
     break;
   }
@@ -145,6 +146,8 @@ void ppu::step(int cycles) {
   }
   
   }
+
+  stat_check_interrupts();
 }
 
 bool ppu::frame_ready() const { return frame_ready_; }
@@ -175,7 +178,7 @@ void ppu::write_oam(word offset, byte val) {
 byte ppu::read_register(word addr) const {
   switch(addr) {
   case LCDC_ADDRESS: return lcdc_;
-  case STAT_ADDRESS: return stat_;
+  case STAT_ADDRESS: return stat_ | 0x80;
   case SCY_ADDRESS: return scy_;
   case SCX_ADDRESS: return scx_;
   case LY_ADDRESS: return ly_;
@@ -195,12 +198,16 @@ void ppu::write_register(word addr, byte val) {
   switch(addr) {
   case LCDC_ADDRESS: lcdc_ = val; break;
   case STAT_ADDRESS: 
-    stat_ = static_cast<byte>((stat_ & 0x07) | (val & 0x78)); 
+    stat_ = val;
+    stat_update(); 
     break;
   case SCY_ADDRESS: scy_ = val; break;
   case SCX_ADDRESS: scx_ = val; break;
   case LY_ADDRESS: ly_ = 0; break;
-  case LYC_ADDRESS: lyc_ = val; break;
+  case LYC_ADDRESS: 
+    lyc_ = val; 
+    stat_update(); 
+    break;
   case WY_ADDRESS: wy_ = val; break;
   case WX_ADDRESS: wx_ = val; break;
 
@@ -332,7 +339,7 @@ void ppu::render_background_line() {
     );
     const byte color_id = bg_window_tile_pixel(tile_id, 
       static_cast<byte>(pixel_x), 
-      static_cast<int>(pixel_y)
+      static_cast<byte>(pixel_y)
     );
 
     bg_color_ids_[screen_x] = color_id;
@@ -424,6 +431,42 @@ void ppu::render_object_line() {
         : obp1_.color(color_id);
     }
   }
+}
+
+bool ppu::stat_lyc_selected() const {
+  return (stat_ & 0x40) != 0;
+}
+bool ppu::stat_mode2_selected() const {
+  return (stat_ & 0x20) != 0;
+}
+bool ppu::stat_mode1_selected() const {
+  return (stat_ & 0x10) != 0;
+}
+bool ppu::stat_mode0_selected() const {
+  return (stat_ & 0x08) != 0;
+}
+
+void ppu::stat_update() {
+  if (ly_ == lyc_) stat_ |= 0x04;
+  else stat_ &= 0xfb;
+
+  stat_ = (stat_ & 0xfc) | static_cast<byte>(mode_);
+}
+
+void ppu::stat_check_interrupts() {
+  stat_update();
+
+  bool stat_signal = 
+    ((ly_ == lyc_) &&  stat_lyc_selected()) ||
+    ((mode_ ==  mode::hblank) && stat_mode0_selected()) ||
+    ((mode_ == mode::vblank) && stat_mode1_selected()) ||
+    ((mode_ == mode::oam_scan) && stat_mode2_selected());
+
+  if (stat_signal && !stat_interrupt_line_)
+    interrupt_handler_.request_interrupt(LCDC);
+
+  stat_interrupt_line_ = stat_signal;
+
 }
 
 
