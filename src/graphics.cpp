@@ -236,65 +236,129 @@ byte ppu::object_height() const {
 }
 
 void ppu::render_scanline() {
-  if (mode_ == mode::vblank) return;
+  if (ly_ >= SCREEN_HEIGHT) return;
 
   render_background_line();
   render_window_line();
   render_object_line();
 }
 void ppu::render_background_line() {
-  if (!bg_enabled()) return;
+  std::fill(bg_color_ids_.begin(), bg_color_ids_.end(), 0);
+  const int line_offset = static_cast<int>(ly_) * SCREEN_WIDTH;
 
-  byte height = (ly_ * SCREEN_WIDTH);
-  for (int i = 0; i < SCREEN_WIDTH; ++i) {
-    byte tile_id = read_vram(bg_tile_map_base() + height + i);
-    framebuffer_[height + i] = bg_window_tile_pixel(tile_id, scx_, scy_);
+  if (!bg_enabled()) {
+    for (int screen_x = 0; screen_x < SCREEN_WIDTH; ++screen_x) {
+      framebuffer_[line_offset + screen_x] = bgp_.color(0);
+    }
+    return;
+  }
+
+
+  for (int screen_x = 0; screen_x < SCREEN_WIDTH; ++screen_x) {
+    const byte bg_x = static_cast<byte>(scx_ + screen_x);
+    const byte bg_y = static_cast<byte>(scy_ + ly_);
+
+    const int tile_x = bg_x / 8;
+    const int tile_y = bg_y / 8;
+
+    const int pixel_x = bg_x % 8;
+    const int pixel_y = bg_y % 8;
+
+    byte tile_id = read_vram(
+      bg_tile_map_base() + tile_y * 32 + tile_x
+    );
+    const byte color_id = bg_window_tile_pixel(tile_id, 
+      static_cast<byte>(pixel_x), 
+      static_cast<int>(pixel_y)
+    );
+
+    bg_color_ids_[screen_x] = color_id;
+    framebuffer_[line_offset + screen_x] = bgp_.color(color_id);
   }
 }
 void ppu::render_window_line() {
-  if (!window_enabled()) return;
+  if (!window_enabled() || ly_ < wy_) return;
 
-  byte height = (ly_ * SCREEN_WIDTH);
-  for (int i = 0; i < SCREEN_WIDTH; ++i) {
-    byte tile_id = read_vram(window_tile_map_base() + height + i);
-    framebuffer_[height + i] = bg_window_tile_pixel(tile_id, wx_, wy_);
+  const int line_offset = static_cast<int>(ly_) * SCREEN_WIDTH;
+  const int window_screen_x = static_cast<int>(wx_) - 7;
+
+  for (int screen_x = 0; screen_x < SCREEN_WIDTH; ++screen_x) {
+    if (screen_x < window_screen_x) continue;
+
+    const int win_x = screen_x - window_screen_x;
+    const int win_y = static_cast<int>(ly_) - static_cast<int>(wy_);
+
+    const int tile_x = win_x / 8;
+    const int tile_y = win_y / 8;
+
+    const int pixel_x = win_x % 8;
+    const int pixel_y = win_y % 8;
+
+    const byte tile_id = read_vram(window_tile_map_base() + tile_y * 32 + tile_x);
+    const auto color_id = bg_window_tile_pixel(
+      tile_id, 
+      static_cast<byte>(pixel_x), 
+      static_cast<byte>(pixel_y)
+    );
+
+    bg_color_ids_[screen_x] = color_id;
+    framebuffer_[line_offset + screen_x] = bgp_.color(color_id);
   }
 }
 void ppu::render_object_line() {
   if (!objects_enabled()) return;
 
-  byte objects_count{};
+  const int line_offset = static_cast<int>(ly_) * SCREEN_WIDTH;
 
-  byte height = (ly_ * SCREEN_HEIGHT);
-
+  const int height = object_height();
   std::vector<object> objects{};
-  for (int i = 0; i < OAM_COUNT && objects_count < 10; ++i) {
+  for (int i = 0; i < OAM_COUNT && objects.size() < 10; ++i) {
     object obj = read_object(i);
-    if (
-      obj.screen_y() - object_height() < ly_ &&
-      obj.screen_y() > ly_ &&
-      !obj.behind_bg()
-    ) {
+    int sprite_y = obj.screen_y();
+
+    bool intersects =
+      sprite_y <= ly_ &&
+      ly_ < sprite_y + height;
+
+    if (intersects) {
       objects.push_back(obj);
-      ++objects_count;
     }
   }
 
-  std::sort(objects.begin(), objects.end(), [](auto a, auto b) {
-    return a.x < b.x;
-  });
+  std::sort(
+    objects.begin(), 
+    objects.end(), 
+    [](const object& left, const object& right) {
+      return left.x > right.x;
+    }
+  );
 
-  for (auto obj : objects) {
-    for (int i = 0; i + obj.screen_x() < SCREEN_WIDTH; ++i) {
-      auto color_id = object_tile_pixel(obj.tile_index, obj.x, obj.y);
-      switch(obj.palette_id()) {
-      case 0:
-        framebuffer_[i] = obp0_.color(color_id);
-        break;
-      case 1:
-        framebuffer_[i] = obp1_.color(color_id);
-        break;
+  for (const auto& obj : objects) {
+    for (int sprite_x = 0; sprite_x < 8; ++sprite_x) {
+      auto screen_x = obj.screen_x() + sprite_x;
+
+      if (screen_x < 0 || screen_x >= SCREEN_WIDTH) {
+        continue;
       }
+
+      int tile_x = sprite_x;
+      int tile_y = static_cast<int>(ly_) - obj.screen_y();
+
+      if (obj.x_flip()) tile_x = 7 - tile_x;
+      if (obj.y_flip()) tile_y = height - 1 - tile_y;
+
+      auto color_id = object_tile_pixel(
+        obj.tile_index, 
+        static_cast<byte>(tile_x), 
+        static_cast<byte>(tile_y)
+      );
+
+      if (color_id == 0) continue;
+      if (obj.behind_bg() && bg_color_ids_[screen_x] != 0) continue;
+      
+      framebuffer_[line_offset + screen_x] = obj.palette_id() == 0
+        ? obp0_.color(color_id)
+        : obp1_.color(color_id);
     }
   }
 }

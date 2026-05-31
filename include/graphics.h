@@ -136,6 +136,7 @@ private:
   bool frame_ready_{};
 
   std::array<std::uint32_t, SCREEN_WIDTH * SCREEN_HEIGHT> framebuffer_{};
+  std::array<byte, SCREEN_WIDTH> bg_color_ids_{};
 };
 
 }
