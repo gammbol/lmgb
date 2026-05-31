@@ -176,9 +176,9 @@ On Windows, depending on the selected CMake generator, the executable may be pla
 - [x] Add ROM-only / MBC1-oriented memory controller code.
 - [x] Add renderer prototype with GLFW/OpenGL.
 - [ ] Complete the memory map and IO register routing.
-- [ ] Finish PPU mode timing and scanline rendering.
-- [ ] Implement background/window rendering.
-- [ ] Implement object/sprite rendering.
+- [x] Finish PPU mode timing and scanline rendering.
+- [x] Implement background/window rendering.
+- [x] Implement object/sprite rendering.
 - [ ] Implement OAM DMA cleanly through the memory bus.
 - [ ] Integrate timer, interrupts, input, CPU, and PPU timing.
 - [ ] Add test ROM based validation.
