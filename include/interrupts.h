@@ -6,6 +6,9 @@
 
 namespace lmgb {
 
+inline constexpr word INTERRUPT_ENABLE_ADDRESS = 0xffff;
+inline constexpr word INTERRUPT_FLAG_ADDRESS = 0xffef;
+
 // class Cpu;
 // class Memory;
 
@@ -22,6 +25,9 @@ private:
   byte inte, intf;
 
 public:
+  byte read(word addr) const;
+  void write(word addr, byte val);
+
   interrupts();
 
   void request_interrupt(INT_TYPE type);

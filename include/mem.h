@@ -8,12 +8,15 @@
 #include <mbc_nombc.h>
 
 #include <defs.h>
+#include <interrupts.h>
 // #define MEM_LEN 0x10000
 
 namespace lmgb {
 
 class mem {
-  lmgb::mbc *memory_controller;
+  mbc *memory_controller_;
+  interrupts interrupt_handler_;
+
 
   // TODO: finish oam dma
   void dma_transfer(byte val);

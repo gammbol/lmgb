@@ -1,4 +1,5 @@
 #include <interrupts.h>
+#include <cassert>
 
 /*
 Interrupt			Priority	Start Address
@@ -9,37 +10,76 @@ $0050 Serial Transfer		4			$0058 - when transfer is
 complete Hi-Lo of P10-P13	5			$0060
 */
 
-lmgb::interrupts::interrupts() {
+namespace lmgb {
+
+interrupts::interrupts() {
   intf = 0;
   inte = 0;
 }
 
-void lmgb::interrupts::request_interrupt(INT_TYPE type) { intf |= type; }
+byte interrupts::read(word addr) const {
+  assert(
+    addr == INTERRUPT_ENABLE_ADDRESS || 
+    addr == INTERRUPT_FLAG_ADDRESS
+  );
 
-void lmgb::interrupts::step(int steps, lmgb::cpu &cpu) {
-  if ((intf & inte) & 0x1f) {
+  switch(addr) {
+  case INTERRUPT_ENABLE_ADDRESS: return inte;
+  case INTERRUPT_FLAG_ADDRESS: return intf;
+  }
+}
+
+void interrupts::write(word addr, byte val) {
+  assert(
+    addr == INTERRUPT_ENABLE_ADDRESS || 
+    addr == INTERRUPT_FLAG_ADDRESS
+  );
+
+  switch(addr) {
+  case INTERRUPT_ENABLE_ADDRESS: 
+    inte = val;
+    break;
+
+  case INTERRUPT_FLAG_ADDRESS:
+    intf = val;
+    break;
+  }
+}
+
+void interrupts::request_interrupt(INT_TYPE type) { intf |= type; }
+
+void interrupts::step(int steps, lmgb::cpu &cpu) {
+  byte pending = (intf & inte) & 0x1f;
+  if (pending) {
     if (cpu.ime) {
       cpu.ime = false;
       if (intf & VBLANK) {
+        intf &= ~VBLANK;
         cpu.pushWord(cpu.pc);
         cpu.pc = 0x40;
       }
-      if (intf & LCDC) {
+      else if (pending & LCDC) {
+        intf &= ~LCDC;
         cpu.pushWord(cpu.pc);
         cpu.pc = 0x48;
       }
-      if (intf & T_OVERFLOW) {
+      else if (pending & T_OVERFLOW) {
+        intf &= ~T_OVERFLOW;
         cpu.pushWord(cpu.pc);
         cpu.pc = 0x50;
       }
-      if (intf & IO_COMPLETE) {
+      else if (pending & IO_COMPLETE) {
+        intf &= ~IO_COMPLETE;
         cpu.pushWord(cpu.pc);
         cpu.pc = 0x58;
       }
-      if (intf & JOYPAD) {
+      else if (pending & JOYPAD) {
+        intf &= ~JOYPAD;
         cpu.pushWord(cpu.pc);
         cpu.pc = 0x60;
       }
     }
   }
+}
+
 }
