@@ -84,6 +84,69 @@ void ppu::write(word addr, byte val) {
   }
 }
 
+void ppu::step(int cycles) {
+  if (!lcd_enabled()) {
+    ly_ = 0;
+    dots_ = 0;
+    mode_ = mode::oam_scan;
+    frame_ready_ = false;
+    return;
+  }
+
+  dots_ += cycles;
+
+  switch(mode_) {
+  
+  case mode::oam_scan: {
+    if (dots_ >= OAM_SCAN_LENGTH) {
+      dots_ -= OAM_SCAN_LENGTH;
+      mode_ = mode::drawing;
+    }
+    break;
+  }
+
+  case mode::drawing: {
+    if (dots_ >= DRAWING_LENGTH) {
+      dots_ -= DRAWING_LENGTH;
+      render_scanline();
+      mode_ = mode::hblank;
+    }
+    break;
+  }
+
+  case mode::hblank: {
+    if (dots_ >= HBLANK_LENGTH) {
+      dots_ -= HBLANK_LENGTH;
+      ++ly_;
+
+      if (ly_ == SCREEN_HEIGHT) {
+        mode_ = mode::vblank;
+        frame_ready_ = true;
+        interrupt_handler_.request_interrupt(INT_TYPE::VBLANK);
+      } else {
+        mode_ = mode::oam_scan;
+      }
+    }
+    break;
+  }
+
+  case mode::vblank: {
+    if (dots_ >= SCANLINE_LENGTH) {
+      dots_ -= SCANLINE_LENGTH;
+      ++ly_;
+
+      if (ly_ > 153) {
+        ly_ = 0;
+        frame_ready_ = false;
+        mode_ = mode::oam_scan;
+      }
+    }
+    break;
+  }
+  
+  }
+}
+
 bool ppu::frame_ready() const { return frame_ready_; }
 void ppu::clear_frame_ready() { frame_ready_ = false; }
 

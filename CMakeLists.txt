@@ -18,6 +18,7 @@ add_executable(lmgb
   src/graphics.cpp
   src/glad.c
   src/renderer.cpp
+  src/interrupts.cpp
 )
 
 target_include_directories(lmgb PUBLIC include)

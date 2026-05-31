@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include <defs.h>
+#include <interrupts.h>
 
 namespace lmgb {
 
@@ -26,6 +27,11 @@ inline constexpr word OBP1_ADDRESS = 0xff49;
 inline constexpr word VRAM_SIZE = 0x2000;
 inline constexpr word OAM_SIZE = 0xa0;
 inline constexpr byte OAM_COUNT = 40;
+
+inline constexpr word OAM_SCAN_LENGTH = 80;
+inline constexpr word DRAWING_LENGTH = 172;
+inline constexpr word HBLANK_LENGTH = 204;
+inline constexpr word SCANLINE_LENGTH = 456;
 
 inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
     0x9bbc0f,
@@ -73,7 +79,11 @@ public:
 
   const std::array<std::uint32_t, SCREEN_WIDTH * SCREEN_HEIGHT>& framebuffer() const;
 
+  ppu(interrupts& interrupt_handler) : interrupt_handler_(interrupt_handler) {}
+
 private:
+  interrupts& interrupt_handler_;
+
   byte read_vram(word offset) const;
   void write_vram(word offset, byte val);
 

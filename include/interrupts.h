@@ -24,7 +24,7 @@ private:
 public:
   interrupts();
 
-  void requestInterrupt(INT_TYPE type);
+  void request_interrupt(INT_TYPE type);
   void step(int steps, lmgb::cpu &cpu);
 };
 

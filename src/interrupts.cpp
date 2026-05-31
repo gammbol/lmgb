@@ -14,7 +14,7 @@ lmgb::interrupts::interrupts() {
   inte = 0;
 }
 
-void lmgb::interrupts::requestInterrupt(INT_TYPE type) { intf |= type; }
+void lmgb::interrupts::request_interrupt(INT_TYPE type) { intf |= type; }
 
 void lmgb::interrupts::step(int steps, lmgb::cpu &cpu) {
   if ((intf & inte) & 0x1f) {
