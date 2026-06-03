@@ -33,6 +33,8 @@ inline constexpr word DRAWING_LENGTH = 172;
 inline constexpr word HBLANK_LENGTH = 204;
 inline constexpr word SCANLINE_LENGTH = 456;
 
+inline constexpr unsigned T_CYCLES_PER_M = 4;
+
 inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
     0x9bbc0f,
     0x8bac0f,
@@ -112,6 +114,8 @@ private:
   void render_background_line();
   void render_window_line();
   void render_object_line();
+
+  unsigned m_to_t_convert(const unsigned m_cycles) const;
 
 private:
   std::array<byte, VRAM_SIZE> vram_{};

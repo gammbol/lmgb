@@ -41,7 +41,7 @@ void lmgb::timer::write(const word addr, const byte value) {
   }
 }
 
-void lmgb::timer::Step(const word c, interrupts& interrupt) {
+void lmgb::timer::step(const word c, interrupts& interrupt) {
   cycles += c;
 
   // DIV

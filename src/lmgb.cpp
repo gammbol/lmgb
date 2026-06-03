@@ -1,6 +1,30 @@
 #include <lmgb.h>
 
-lmgb::gb::gb(const char *path) : 
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
+    std::cout << "Usage: lmgb <path-to-game-file>" << std::endl;
+    return -1;
+  }
+
+  // TODO: file extension validation
+
+  try {
+    lmgb::gb console{argv[1]};
+
+    while (true) {
+      console.step();
+    }
+  } catch (std::exception &e) {
+    std::cerr << "ERROR: " << e.what() << std::endl;
+    return -1;
+  }
+
+  return 0;
+}
+
+namespace lmgb {
+
+gb::gb(const char *path) : 
   rom_data(),
   memory_{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_},
   cpu_{memory_}
@@ -28,8 +52,8 @@ lmgb::gb::gb(const char *path) :
   game_data.read(reinterpret_cast<char *>(&tmp), 1);
   rom_size = static_cast<ROM_SIZES>(tmp);
 
-  if (mbc_type != lmgb::MBC_TYPES::MBC1_RAM) {
-    ram_size = lmgb::RAM_SIZES::RAM_NO_RAM;
+  if (mbc_type != MBC_TYPES::MBC1_RAM) {
+    ram_size = RAM_SIZES::RAM_NO_RAM;
   } else {
     game_data.seekg(0x0149, std::ifstream::beg);
     game_data.read(reinterpret_cast<char *>(&tmp), 1);
@@ -65,42 +89,33 @@ lmgb::gb::gb(const char *path) :
   renderer_ = new renderer(memory_, game_title, vertex_path, fragment_path);
 }
 
-void lmgb::gb::Step() {
+void gb::sync_devices(const unsigned cycles) {
+  if (cycles == 0) return;
+
+  pixel_processing_unit_.step(cycles);
+  timer_.step(cycles, interrupt_handler_);
+}
+
+void gb::step() {
 #ifdef LMGB_DEBUG
   std::cout << "============ CPU STATE ============" << std::endl;
-  std::cout << "AF: " << std::hex << lmgb_cpu->af.pair << std::endl;
-  std::cout << "BC: " << std::hex << lmgb_cpu->bc.pair << std::endl;
-  std::cout << "DE: " << std::hex << lmgb_cpu->de.pair << std::endl;
-  std::cout << "HL: " << std::hex << lmgb_cpu->hl.pair << std::endl;
+  std::cout << "AF: " << std::hex << cpu_.af.pair << std::endl;
+  std::cout << "BC: " << std::hex << cpu_.bc.pair << std::endl;
+  std::cout << "DE: " << std::hex << cpu_.de.pair << std::endl;
+  std::cout << "HL: " << std::hex << cpu_.hl.pair << std::endl;
   std::cout << "===================================" << std::endl;
 #endif
 
-  cpu_.Step();
+  word cycles = cpu_.state == HALTED ? CYCLES_WHILE_HALTED : cpu_.step();
+  sync_devices(cycles);
+
+  bool interrupt_serviced = interrupt_handler_.step(cpu_);
+  if (interrupt_serviced) sync_devices(SERVICING_INTERRUPT_CYCLES);
 }
 
 // lmgb::gb::~gb() { delete rom_data; }
-lmgb::gb::~gb() {
+gb::~gb() {
   delete renderer_;
 }
 
-int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    std::cout << "Usage: lmgb <path-to-game-file>" << std::endl;
-    return -1;
-  }
-
-  // TODO: file extension validation
-
-  try {
-    lmgb::gb console{argv[1]};
-
-    while (true) {
-      console.Step();
-    }
-  } catch (std::exception &e) {
-    std::cerr << "ERROR: " << e.what() << std::endl;
-    return -1;
-  }
-
-  return 0;
 }

@@ -74,10 +74,10 @@ void lmgb::cpu::getBit(const byte reg, const int pos) {
   HF_SET(af.bytes.l);
 }
 
-void lmgb::cpu::Step() {
+lmgb::byte lmgb::cpu::step() {
   // TODO: redo opcode reading function
   byte opcode = readOp(pc);
-  char cycles = 0;
+  byte cycles = 0;
 
   switch (opcode) {
   // LD nn,n
@@ -3299,7 +3299,7 @@ void lmgb::cpu::Step() {
 
   // DI
   case 0xf3: {
-    Step();
+    step();
     ime = false;
     cycles = 4;
     break;
@@ -3307,7 +3307,7 @@ void lmgb::cpu::Step() {
 
   // EI
   case 0xfb: {
-    Step();
+    step();
     ime = true;
     cycles = 4;
     break;
@@ -3654,4 +3654,6 @@ void lmgb::cpu::Step() {
     break;
   }
   }
+
+  return cycles;
 }

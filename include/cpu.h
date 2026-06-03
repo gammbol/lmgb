@@ -7,6 +7,8 @@
 #include <enums.h>
 #include <mem.h>
 
+inline constexpr unsigned CYCLES_WHILE_HALTED = 1;
+
 #define SYNC_WITH_CPU(clockDelta)
 
 #define getbatpos(a, pos) ((a & (a << pos)) >> pos)
@@ -84,7 +86,7 @@ public:
   word popWord();
 
   byte readOp(word &pc);
-  void Step();
+  unsigned step();
 };
 } // namespace lmgb
 

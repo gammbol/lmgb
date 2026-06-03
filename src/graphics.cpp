@@ -93,7 +93,7 @@ void ppu::step(int cycles) {
     return;
   }
 
-  dots_ += cycles;
+  dots_ += m_to_t_convert(cycles);
 
   switch(mode_) {
   
@@ -101,7 +101,6 @@ void ppu::step(int cycles) {
     if (dots_ >= OAM_SCAN_LENGTH) {
       dots_ -= OAM_SCAN_LENGTH;
       mode_ = mode::drawing;
-      stat_update();
     }
     break;
   }
@@ -431,6 +430,10 @@ void ppu::render_object_line() {
         : obp1_.color(color_id);
     }
   }
+}
+
+unsigned ppu::m_to_t_convert(const unsigned m_cycles) const { 
+  return m_cycles * T_CYCLES_PER_M;
 }
 
 bool ppu::stat_lyc_selected() const {

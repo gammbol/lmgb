@@ -12,6 +12,7 @@
 #include <graphics.h>
 #include <interrupts.h>
 #include <renderer.h>
+#include <timer.h>
 
 namespace lmgb {
 char const  *vertex_path = "shaders/vertex.vs";
@@ -30,12 +31,15 @@ class gb {
   mem memory_;
   ppu pixel_processing_unit_{interrupt_handler_};
   renderer *renderer_;
+  timer timer_{};
 
 public:
   gb(const char *path);
   ~gb();
+  
+  void sync_devices(const unsigned cycles);
 
-  void Step();
+  void step();
 };
 
 } // namespace lmgb

@@ -51,36 +51,34 @@ void interrupts::write(word addr, byte val) {
 
 void interrupts::request_interrupt(INT_TYPE type) { interrupt_flag |= type; }
 
-void interrupts::step(int steps, lmgb::cpu &cpu) {
+void interrupts::service_interrupt(cpu& cpu, INT_TYPE type, word addr) {
+  interrupt_flag &= ~type;
+  cpu.ime = false;
+  cpu.pushWord(cpu.pc);
+  cpu.pc = addr;
+}
+
+bool interrupts::step(cpu &cpu) {
   byte pending = (interrupt_flag & interrupt_enable) & 0x1f;
 
-  if (!pending) return;
+  if (!pending) return false;
 
   if (cpu.state == HALTED) cpu.state = RUNNING;
 
-  if (!cpu.ime) return;
+  if (!cpu.ime) return false;
 
-  if (pending & VBLANK) {
-    interrupt_flag &= ~VBLANK;
-    cpu.pushWord(cpu.pc);
-    cpu.pc = 0x40;
-  } else if (pending & LCDC) {
-    interrupt_flag &= ~LCDC;
-    cpu.pushWord(cpu.pc);
-    cpu.pc = 0x48;
-  } else if (pending & T_OVERFLOW) {
-    interrupt_flag &= ~T_OVERFLOW;
-    cpu.pushWord(cpu.pc);
-    cpu.pc = 0x50;
-  } else if (pending & IO_COMPLETE) {
-    interrupt_flag &= ~IO_COMPLETE;
-    cpu.pushWord(cpu.pc);
-    cpu.pc = 0x58;
-  } else if (pending & JOYPAD) {
-    interrupt_flag &= ~JOYPAD;
-    cpu.pushWord(cpu.pc);
-    cpu.pc = 0x60;
-  }
+  if (pending & VBLANK)
+    service_interrupt(cpu, VBLANK, INTERRUPT_VBLANK_ADDRESS);
+  else if (pending & LCDC)
+    service_interrupt(cpu, LCDC, INTERRUPT_LCDC_ADDRESS);
+  else if (pending & T_OVERFLOW)
+    service_interrupt(cpu, T_OVERFLOW, INTERRUPT_T_OVERFLOW_ADDRESS);
+  else if (pending & IO_COMPLETE)
+    service_interrupt(cpu, IO_COMPLETE, INTERRUPT_IO_COMPLETE_ADDRESS);
+  else if (pending & JOYPAD)
+    service_interrupt(cpu, JOYPAD, INTERRUPT_JOYPAD_ADDRESS);
+
+  return true;
 }
 
 }

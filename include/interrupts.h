@@ -7,8 +7,16 @@ namespace lmgb {
 
 class cpu;
 
+inline constexpr word SERVICING_INTERRUPT_CYCLES = 5;
+
 inline constexpr word INTERRUPT_ENABLE_ADDRESS = 0xffff;
 inline constexpr word INTERRUPT_FLAG_ADDRESS = 0xff0f;
+
+inline constexpr word INTERRUPT_VBLANK_ADDRESS = 0x0040;
+inline constexpr word INTERRUPT_LCDC_ADDRESS = 0x0048;
+inline constexpr word INTERRUPT_T_OVERFLOW_ADDRESS = 0x0050;
+inline constexpr word INTERRUPT_IO_COMPLETE_ADDRESS = 0x0058;
+inline constexpr word INTERRUPT_JOYPAD_ADDRESS = 0x0060;
 
 // class Cpu;
 // class Memory;
@@ -32,7 +40,9 @@ public:
   interrupts();
 
   void request_interrupt(INT_TYPE type);
-  void step(int steps, lmgb::cpu &process);
+  void service_interrupt(cpu& cpu, INT_TYPE type, word addr);
+
+  bool step(cpu& cpu);
 };
 
 } // namespace lmgb
