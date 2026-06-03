@@ -9,6 +9,7 @@
 
 #include <defs.h>
 #include <interrupts.h>
+#include <graphics.h>
 // #define MEM_LEN 0x10000
 
 namespace lmgb {
@@ -16,6 +17,7 @@ namespace lmgb {
 class mem {
   mbc *memory_controller_;
   interrupts interrupt_handler_;
+  ppu& pixel_processing_unit_;
 
 
   // TODO: finish oam dma
@@ -23,7 +25,7 @@ class mem {
 
 public:
   mem(MBC_TYPES mbc_type, ROM_SIZES rom_size, RAM_SIZES ram_size,
-      std::vector<byte> &rom_data);
+      std::vector<byte> &rom_data, ppu& ppu);
   ~mem();
   byte Read(word addr);
   void Write(word addr, byte val);

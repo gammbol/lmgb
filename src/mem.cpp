@@ -3,7 +3,8 @@
 namespace lmgb {
 
 mem::mem(MBC_TYPES mbc_type, ROM_SIZES rom_size,
-        RAM_SIZES ram_size, std::vector<byte> &rom_data) {
+        RAM_SIZES ram_size, std::vector<byte> &rom_data, ppu& ppu) : 
+        pixel_processing_unit_(ppu) {
   switch (mbc_type) {
   default:
   case ROM_ONLY:
@@ -30,6 +31,10 @@ byte mem::Read(word addr) {
   case 0xa000:
   case 0xb000:
     return memory_controller_->read(addr);
+
+  case 0x8000:
+  case 0x9000:
+    return pixel_processing_unit_.read(addr);
   
   case 0xf000: {
     if (
@@ -60,8 +65,14 @@ void mem::Write(word addr, byte val) {
 
   case 0x8000:
   case 0x9000:
-    // vram
+    pixel_processing_unit_.write(addr, val);
     break;
+
+  case 0xf000:
+    if (
+      addr == INTERRUPT_ENABLE_ADDRESS ||
+      addr == INTERRUPT_FLAG_ADDRESS
+    ) interrupt_handler_.write(addr, val);
 
   default:
     return;
