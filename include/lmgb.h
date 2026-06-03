@@ -9,6 +9,8 @@
 
 // gameboy elements
 #include <cpu.h>
+#include <graphics.h>
+#include <interrupts.h>
 #include <renderer.h>
 
 namespace lmgb {
@@ -23,9 +25,11 @@ class gb {
 
   std::vector<lmgb::byte> rom_data;
 
-  mem *memory;
-  cpu *lmgb_cpu;
-  renderer *rndr;
+  cpu cpu_;
+  interrupts interrupt_handler_{};
+  mem memory_;
+  ppu pixel_processing_unit_{interrupt_handler_};
+  renderer *renderer_;
 
 public:
   gb(const char *path);

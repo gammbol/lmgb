@@ -1,6 +1,10 @@
 #include <lmgb.h>
 
-lmgb::gb::gb(const char *path) : rom_data() {
+lmgb::gb::gb(const char *path) : 
+  rom_data(),
+  memory_{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_},
+  cpu_{memory_}
+{
   std::ifstream game_data;
 
   game_data.open(path);
@@ -58,10 +62,7 @@ lmgb::gb::gb(const char *path) : rom_data() {
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
-  memory = new lmgb::mem(mbc_type, rom_size, ram_size, rom_data);
-  lmgb_cpu = new lmgb::cpu(memory);
-  rndr = new lmgb::renderer(memory, game_title, vertex_path,
-                            fragment_path);
+  renderer_ = new renderer(memory_, game_title, vertex_path, fragment_path);
 }
 
 void lmgb::gb::Step() {
@@ -74,13 +75,12 @@ void lmgb::gb::Step() {
   std::cout << "===================================" << std::endl;
 #endif
 
-  lmgb_cpu->Step();
+  cpu_.Step();
 }
 
 // lmgb::gb::~gb() { delete rom_data; }
 lmgb::gb::~gb() {
-  delete lmgb_cpu;
-  delete rndr;
+  delete renderer_;
 }
 
 int main(int argc, char *argv[]) {

@@ -29,10 +29,10 @@ class renderer {
   // texture buffer
   unsigned int texture;
 
-  mem *memory;
+  mem& memory_;
 
 public:
-  renderer(mem *memory, char *game_title, char const *vs, char const *fs);
+  renderer(mem &memory, char *game_title, char const *vs, char const *fs);
   ~renderer();
 
   void render(const byte *framebuffer);

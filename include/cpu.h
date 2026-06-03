@@ -69,12 +69,12 @@ private:
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
-  lmgb::mem *mem;
+  lmgb::mem& mem;
 
   CpuState state;
   bool ime;
 
-  cpu(lmgb::mem *memory);
+  cpu(lmgb::mem& memory);
   // ~Cpu();
 
   void pushByte(byte val);
