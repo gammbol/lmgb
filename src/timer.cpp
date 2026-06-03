@@ -41,7 +41,7 @@ void lmgb::timer::write(const word addr, const byte value) {
   }
 }
 
-void lmgb::timer::Step(const word c, interrupts interrupt) {
+void lmgb::timer::Step(const word c, interrupts& interrupt) {
   cycles += c;
 
   // DIV
@@ -53,7 +53,7 @@ void lmgb::timer::Step(const word c, interrupts interrupt) {
   if (isTacEnabled()) {
     if (isOverflow(tima)) {
       tima = tma;
-      interrupt.requestInterrupt(T_OVERFLOW);
+      interrupt.request_interrupt(T_OVERFLOW);
       return;
     }
     tima = cycles % getCS();

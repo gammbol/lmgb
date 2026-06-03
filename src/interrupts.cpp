@@ -1,6 +1,8 @@
 #include <interrupts.h>
 #include <cassert>
 
+#include <cpu.h>
+
 /*
 Interrupt			Priority	Start Address
 V-Blank				1			$0040
@@ -13,8 +15,8 @@ complete Hi-Lo of P10-P13	5			$0060
 namespace lmgb {
 
 interrupts::interrupts() {
-  intf = 0;
-  inte = 0;
+  interrupt_flag = 0;
+  interrupt_enable = 0;
 }
 
 byte interrupts::read(word addr) const {
@@ -24,8 +26,9 @@ byte interrupts::read(word addr) const {
   );
 
   switch(addr) {
-  case INTERRUPT_ENABLE_ADDRESS: return inte;
-  case INTERRUPT_FLAG_ADDRESS: return intf;
+  case INTERRUPT_ENABLE_ADDRESS: return interrupt_enable;
+  case INTERRUPT_FLAG_ADDRESS: return interrupt_flag;
+  default: return 0xff;
   }
 }
 
@@ -37,48 +40,46 @@ void interrupts::write(word addr, byte val) {
 
   switch(addr) {
   case INTERRUPT_ENABLE_ADDRESS: 
-    inte = val;
+    interrupt_enable = val;
     break;
 
   case INTERRUPT_FLAG_ADDRESS:
-    intf = val;
+    interrupt_flag = val;
     break;
   }
 }
 
-void interrupts::request_interrupt(INT_TYPE type) { intf |= type; }
+void interrupts::request_interrupt(INT_TYPE type) { interrupt_flag |= type; }
 
 void interrupts::step(int steps, lmgb::cpu &cpu) {
-  byte pending = (intf & inte) & 0x1f;
-  if (pending) {
-    if (cpu.ime) {
-      cpu.ime = false;
-      if (intf & VBLANK) {
-        intf &= ~VBLANK;
-        cpu.pushWord(cpu.pc);
-        cpu.pc = 0x40;
-      }
-      else if (pending & LCDC) {
-        intf &= ~LCDC;
-        cpu.pushWord(cpu.pc);
-        cpu.pc = 0x48;
-      }
-      else if (pending & T_OVERFLOW) {
-        intf &= ~T_OVERFLOW;
-        cpu.pushWord(cpu.pc);
-        cpu.pc = 0x50;
-      }
-      else if (pending & IO_COMPLETE) {
-        intf &= ~IO_COMPLETE;
-        cpu.pushWord(cpu.pc);
-        cpu.pc = 0x58;
-      }
-      else if (pending & JOYPAD) {
-        intf &= ~JOYPAD;
-        cpu.pushWord(cpu.pc);
-        cpu.pc = 0x60;
-      }
-    }
+  byte pending = (interrupt_flag & interrupt_enable) & 0x1f;
+
+  if (!pending) return;
+
+  if (cpu.state == HALTED) cpu.state = RUNNING;
+
+  if (!cpu.ime) return;
+
+  if (pending & VBLANK) {
+    interrupt_flag &= ~VBLANK;
+    cpu.pushWord(cpu.pc);
+    cpu.pc = 0x40;
+  } else if (pending & LCDC) {
+    interrupt_flag &= ~LCDC;
+    cpu.pushWord(cpu.pc);
+    cpu.pc = 0x48;
+  } else if (pending & T_OVERFLOW) {
+    interrupt_flag &= ~T_OVERFLOW;
+    cpu.pushWord(cpu.pc);
+    cpu.pc = 0x50;
+  } else if (pending & IO_COMPLETE) {
+    interrupt_flag &= ~IO_COMPLETE;
+    cpu.pushWord(cpu.pc);
+    cpu.pc = 0x58;
+  } else if (pending & JOYPAD) {
+    interrupt_flag &= ~JOYPAD;
+    cpu.pushWord(cpu.pc);
+    cpu.pc = 0x60;
   }
 }
 

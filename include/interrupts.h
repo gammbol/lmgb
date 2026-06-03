@@ -1,13 +1,14 @@
 #ifndef LMGB_INTERRUPTS_H
 #define LMGB_INTERRUPTS_H
 
-#include "cpu.h"
-#include "defs.h"
+#include <defs.h>
 
 namespace lmgb {
 
+class cpu;
+
 inline constexpr word INTERRUPT_ENABLE_ADDRESS = 0xffff;
-inline constexpr word INTERRUPT_FLAG_ADDRESS = 0xffef;
+inline constexpr word INTERRUPT_FLAG_ADDRESS = 0xff0f;
 
 // class Cpu;
 // class Memory;
@@ -22,7 +23,7 @@ enum INT_TYPE {
 
 class interrupts {
 private:
-  byte inte, intf;
+  byte interrupt_enable, interrupt_flag;
 
 public:
   byte read(word addr) const;
@@ -31,7 +32,7 @@ public:
   interrupts();
 
   void request_interrupt(INT_TYPE type);
-  void step(int steps, lmgb::cpu &cpu);
+  void step(int steps, lmgb::cpu &process);
 };
 
 } // namespace lmgb

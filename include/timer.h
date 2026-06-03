@@ -29,7 +29,7 @@ public:
 
   void write(word addr, byte value);
 
-  void Step(word c, interrupts interrupt);
+  void Step(word c, interrupts& interrupt);
 };
 } // namespace lmgb
 
