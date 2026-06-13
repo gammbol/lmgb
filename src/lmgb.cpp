@@ -99,10 +99,10 @@ void gb::sync_devices(const unsigned cycles) {
 void gb::step() {
 #ifdef LMGB_DEBUG
   std::cout << "============ CPU STATE ============" << std::endl;
-  std::cout << "AF: " << std::hex << cpu_.af.pair << std::endl;
-  std::cout << "BC: " << std::hex << cpu_.bc.pair << std::endl;
-  std::cout << "DE: " << std::hex << cpu_.de.pair << std::endl;
-  std::cout << "HL: " << std::hex << cpu_.hl.pair << std::endl;
+  std::cout << "AF: " << std::hex << (int)cpu_.af.bytes.h << " " << (int)cpu_.af.bytes.l << std::endl;
+  std::cout << "BC: " << std::hex << (int)cpu_.bc.bytes.h << " " << (int)cpu_.bc.bytes.l << std::endl;
+  std::cout << "DE: " << std::hex << (int)cpu_.de.bytes.h << " " << (int)cpu_.de.bytes.l << std::endl;
+  std::cout << "HL: " << std::hex << (int)cpu_.hl.bytes.h << " " << (int)cpu_.hl.bytes.l << std::endl;
   std::cout << "===================================" << std::endl;
 #endif
 

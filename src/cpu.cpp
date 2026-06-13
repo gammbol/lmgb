@@ -74,7 +74,7 @@ void lmgb::cpu::getBit(const byte reg, const int pos) {
   HF_SET(af.bytes.l);
 }
 
-lmgb::byte lmgb::cpu::step() {
+unsigned lmgb::cpu::step() {
   // TODO: redo opcode reading function
   byte opcode = readOp(pc);
   byte cycles = 0;
