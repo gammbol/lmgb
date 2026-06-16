@@ -26,9 +26,9 @@ class gb {
 
   std::vector<lmgb::byte> rom_data;
 
-  cpu cpu_;
+  cpu *cpu_;
   interrupts interrupt_handler_{};
-  mem memory_;
+  mem *memory_;
   ppu pixel_processing_unit_{interrupt_handler_};
   renderer *renderer_;
   timer timer_{};

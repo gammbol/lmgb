@@ -26,7 +26,7 @@ namespace lmgb {
 
 gb::gb(const char *path) : 
   rom_data(),
-  memory_{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_},
+  ,
   cpu_{memory_}
 {
   std::ifstream game_data;
@@ -86,6 +86,8 @@ gb::gb(const char *path) :
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
+  memory_ = new mem{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_};
+  cpu_ = new cpu{memory_};
   renderer_ = new renderer(memory_, game_title, vertex_path, fragment_path);
 }
 
