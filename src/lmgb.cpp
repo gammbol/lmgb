@@ -24,10 +24,7 @@ int main(int argc, char *argv[]) {
 
 namespace lmgb {
 
-gb::gb(const char *path) : 
-  rom_data(),
-  ,
-  cpu_{memory_}
+gb::gb(const char *path) : rom_data()
 {
   std::ifstream game_data;
 
@@ -87,8 +84,8 @@ gb::gb(const char *path) :
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
   memory_ = new mem{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_};
-  cpu_ = new cpu{memory_};
-  renderer_ = new renderer(memory_, game_title, vertex_path, fragment_path);
+  cpu_ = new cpu{*memory_};
+  renderer_ = new renderer(*memory_, game_title, vertex_path, fragment_path);
 }
 
 void gb::sync_devices(const unsigned cycles) {
@@ -101,17 +98,17 @@ void gb::sync_devices(const unsigned cycles) {
 void gb::step() {
 #ifdef LMGB_DEBUG
   std::cout << "============ CPU STATE ============" << std::endl;
-  std::cout << "AF: " << std::hex << (int)cpu_.af.bytes.h << " " << (int)cpu_.af.bytes.l << std::endl;
-  std::cout << "BC: " << std::hex << (int)cpu_.bc.bytes.h << " " << (int)cpu_.bc.bytes.l << std::endl;
-  std::cout << "DE: " << std::hex << (int)cpu_.de.bytes.h << " " << (int)cpu_.de.bytes.l << std::endl;
-  std::cout << "HL: " << std::hex << (int)cpu_.hl.bytes.h << " " << (int)cpu_.hl.bytes.l << std::endl;
+  std::cout << "AF: " << std::hex << (int)cpu_->af.bytes.h << " " << (int)cpu_->af.bytes.l << std::endl;
+  std::cout << "BC: " << std::hex << (int)cpu_->bc.bytes.h << " " << (int)cpu_->bc.bytes.l << std::endl;
+  std::cout << "DE: " << std::hex << (int)cpu_->de.bytes.h << " " << (int)cpu_->de.bytes.l << std::endl;
+  std::cout << "HL: " << std::hex << (int)cpu_->hl.bytes.h << " " << (int)cpu_->hl.bytes.l << std::endl;
   std::cout << "===================================" << std::endl;
 #endif
 
-  word cycles = cpu_.state == HALTED ? CYCLES_WHILE_HALTED : cpu_.step();
+  word cycles = cpu_->state == HALTED ? CYCLES_WHILE_HALTED : cpu_->step();
   sync_devices(cycles);
 
-  bool interrupt_serviced = interrupt_handler_.step(cpu_);
+  bool interrupt_serviced = interrupt_handler_.step(*cpu_);
   if (interrupt_serviced) sync_devices(SERVICING_INTERRUPT_CYCLES);
 }
 
