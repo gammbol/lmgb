@@ -15,8 +15,8 @@ complete Hi-Lo of P10-P13	5			$0060
 namespace lmgb {
 
 interrupts::interrupts() {
-  interrupt_flag = 0;
-  interrupt_enable = 0;
+  interrupt_flag_ = 0;
+  interrupt_enable_ = 0;
 }
 
 byte interrupts::read(word addr) const {
@@ -26,8 +26,8 @@ byte interrupts::read(word addr) const {
   );
 
   switch(addr) {
-  case INTERRUPT_ENABLE_ADDRESS: return interrupt_enable;
-  case INTERRUPT_FLAG_ADDRESS: return interrupt_flag;
+  case INTERRUPT_ENABLE_ADDRESS: return interrupt_enable_;
+  case INTERRUPT_FLAG_ADDRESS: return interrupt_flag_;
   default: return 0xff;
   }
 }
@@ -40,26 +40,25 @@ void interrupts::write(word addr, byte val) {
 
   switch(addr) {
   case INTERRUPT_ENABLE_ADDRESS: 
-    interrupt_enable = val;
+    interrupt_enable_ = val;
     break;
 
   case INTERRUPT_FLAG_ADDRESS:
-    interrupt_flag = val;
+    interrupt_flag_ = val;
     break;
   }
 }
 
-void interrupts::request_interrupt(INT_TYPE type) { interrupt_flag |= type; }
+void interrupts::request_interrupt(INT_TYPE type) { interrupt_flag_ |= type; }
 
 void interrupts::service_interrupt(cpu& cpu, INT_TYPE type, word addr) {
-  interrupt_flag &= ~type;
-  cpu.ime = false;
+  interrupt_flag_ &= ~type;
   cpu.pushWord(cpu.pc);
   cpu.pc = addr;
 }
 
 bool interrupts::step(cpu &cpu) {
-  byte pending = (interrupt_flag & interrupt_enable) & 0x1f;
+  byte pending = (interrupt_flag_ & interrupt_enable_) & 0x1f;
 
   if (!pending) return false;
 

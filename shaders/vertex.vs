@@ -1,18 +1,11 @@
-#version 460 core
+#version 330 core
+
 layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec3 color;
+layout (location = 1) in vec2 aTexCoord;
 
-out vec3 aColor;
-
-uniform vec2 uResolution;
+out vec2 TexCoord;
 
 void main() {
-  vec2 norm = aPos / uResolution;
-  vec2 ndc = norm * 2.0 - 1.0;
-
-  ndc.y = -ndc.y;
-
-  gl_Position = vec4(ndc, 0.0, 1.0);
-  gl_PointSize = 1.0;
-  aColor = color;
+  gl_Position = vec4(aPos, 0.0, 1.0);
+  TexCoord = aTexCoord;
 }

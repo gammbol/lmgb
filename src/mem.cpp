@@ -4,7 +4,8 @@ namespace lmgb {
 
 mem::mem(MBC_TYPES mbc_type, ROM_SIZES rom_size,
         RAM_SIZES ram_size, std::vector<byte> &rom_data, ppu& ppu) : 
-        pixel_processing_unit_(ppu) {
+        pixel_processing_unit_(ppu)
+{
   switch (mbc_type) {
   default:
   case ROM_ONLY:
@@ -35,16 +36,30 @@ byte mem::Read(word addr) {
   case 0x8000:
   case 0x9000:
     return pixel_processing_unit_.read(addr);
+
+  case 0xc000:
+  case 0xd000:
+    return wram_[addr - 0xc000];
   
   case 0xf000: {
+    if (addr >= 0xfea0 && addr <= 0xfeff) return 0xff;
+
     if (
       addr == INTERRUPT_ENABLE_ADDRESS ||
       addr == INTERRUPT_FLAG_ADDRESS
-    ) interrupt_handler_.read(addr);
+    ) {
+      return interrupt_handler_.read(addr);
+    } else if (addr >= 0xff04 && addr <= 0xff07) {
+      timer_.read(addr);
+    } else if (addr >= 0xff40 && addr <= 0xff4b) {
+      return pixel_processing_unit_.read(addr);
+    } else if (addr >= 0xff80 && addr <= 0xfffe) {
+      return hram_[addr - 0xff80];
+    }
   }
 
   default:
-    return -1;
+    return 0xff;
   }
 }
 
@@ -68,11 +83,32 @@ void mem::Write(word addr, byte val) {
     pixel_processing_unit_.write(addr, val);
     break;
 
-  case 0xf000:
+  case 0xc000:
+  case 0xd000:
+    wram_[addr - 0xc000] = val;
+
+  case 0xf000: {
+    if (addr >= 0xfea0 && addr <= 0xfeff) return;
+
     if (
       addr == INTERRUPT_ENABLE_ADDRESS ||
       addr == INTERRUPT_FLAG_ADDRESS
-    ) interrupt_handler_.write(addr, val);
+    ) {
+      interrupt_handler_.write(addr, val);
+    } else if (addr >= 0xff04 && addr <= 0xff07) {
+      timer_.write(addr, val);
+    } else if (addr >= 0xff40 && addr <= 0xff4b) {
+      if (addr == 0xff46) {
+        dma_transfer();
+        return;
+      }
+
+      pixel_processing_unit_.write(addr, val);
+    } else if (addr >= 0xff80 && addr <= 0xfffe) {
+      hram_[addr - 0xff80] = val;
+    }
+    break;
+  }
 
   default:
     return;

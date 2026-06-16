@@ -18,8 +18,8 @@ namespace lmgb {
 // 11 - 64M cycles
 
 class timer {
-  word cycles;
-  byte div, tima, tma, tac;
+  word cycles_;
+  byte div_, tima_, tma_, tac_;
 
 public:
   timer();
@@ -27,6 +27,7 @@ public:
   short getCS() const;
   bool isTacEnabled() const;
 
+  byte read(word addr) const;
   void write(word addr, byte value);
 
   void step(word c, interrupts& interrupt);

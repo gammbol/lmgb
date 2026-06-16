@@ -74,7 +74,8 @@ public:
   lmgb::mem& mem;
 
   CpuState state;
-  bool ime;
+
+  interrupts interrupt_handler_{};
 
   cpu(lmgb::mem& memory);
   // ~Cpu();

@@ -31,7 +31,7 @@ enum INT_TYPE {
 
 class interrupts {
 private:
-  byte interrupt_enable, interrupt_flag;
+  byte interrupt_enable_, interrupt_flag_;
 
 public:
   byte read(word addr) const;

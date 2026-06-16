@@ -85,7 +85,7 @@ gb::gb(const char *path) : rom_data()
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
   memory_ = new mem{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_};
   cpu_ = new cpu{*memory_};
-  renderer_ = new renderer(*memory_, game_title, vertex_path, fragment_path);
+  renderer_ = new renderer(game_title, vertex_path, fragment_path);
 }
 
 void gb::sync_devices(const unsigned cycles) {
@@ -110,6 +110,11 @@ void gb::step() {
 
   bool interrupt_serviced = interrupt_handler_.step(*cpu_);
   if (interrupt_serviced) sync_devices(SERVICING_INTERRUPT_CYCLES);
+
+  if (pixel_processing_unit_.frame_ready()) {
+    renderer_->render(pixel_processing_unit_.framebuffer().data());
+    pixel_processing_unit_.clear_frame_ready();
+  }
 }
 
 // lmgb::gb::~gb() { delete rom_data; }
