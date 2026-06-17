@@ -9,6 +9,9 @@ public:
   mbc1(ROM_SIZES rom_size, RAM_SIZES ram_size, std::vector<byte> &rom_data)
       : mbc(rom_size, ram_size, rom_data) {
     advancedMode = false;
+
+    selectedRom = 1;
+    romOffset = romBankSize;
   }
 
   byte read(word addr) override {
@@ -49,9 +52,12 @@ public:
     case 0x2000:
     case 0x3000:
       selectedRom = val & 0x1f;
-      if (!advancedMode && selectedRom == 0) {
+
+      if (selectedRom == 0) {
         selectedRom = 1;
       }
+
+      romOffset = static_cast<std::size_t>(selectedRom % romSize) * romBankSize;
       break;
 
     case 0x4000:

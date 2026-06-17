@@ -55,8 +55,8 @@ void lmgb::cpu::pushByte(const byte val) { mem.Write(--sp, val); }
 
 // TODO: sync with clock
 void lmgb::cpu::pushWord(const word val) {
-  pushByte((val & 0xff00) >> 7);
-  pushByte(val & 0x00ff);
+  pushByte(static_cast<byte>((val >> 8) & 0xff));
+  pushByte(static_cast<byte>(val & 0xff));
 }
 
 lmgb::byte lmgb::cpu::popByte() { return mem.Read(sp++); }
@@ -77,12 +77,22 @@ void lmgb::cpu::getBit(const byte reg, const int pos) {
   HF_SET(af.bytes.l);
 }
 
+lmgb::word lmgb::cpu::fetch_u16() {
+  byte lo = mem.Read(pc++);
+  byte hi = mem.Read(pc++);
+  return static_cast<word>((hi << 8) | lo);
+}
+
 unsigned lmgb::cpu::step() {
   // TODO: redo opcode reading function
   byte opcode = readOp(pc);
   byte cycles = 0;
 
   switch (opcode) {
+  case 0x00:
+    cycles = 4;
+    break;
+
   // LD nn,n
   case 0x06: {
     bc.bytes.h = mem.Read(pc++);
@@ -387,7 +397,7 @@ unsigned lmgb::cpu::step() {
     cycles = 16;
   } break;
   case 0x3e:
-    af.bytes.h = mem.Read(pc);
+    af.bytes.h = mem.Read(pc++);
     cycles = 8;
     break;
 
@@ -456,19 +466,19 @@ unsigned lmgb::cpu::step() {
 
   // LD n,nn
   case 0x01:
-    bc.pair = btow(mem.Read(pc++), mem.Read(pc++));
+    bc.pair = fetch_u16();
     cycles = 12;
     break;
   case 0x11:
-    de.pair = btow(mem.Read(pc++), mem.Read(pc++));
+    de.pair = fetch_u16();
     cycles = 12;
     break;
   case 0x21:
-    hl.pair = btow(mem.Read(pc++), mem.Read(pc++));
+    hl.pair = fetch_u16();
     cycles = 12;
     break;
   case 0x31:
-    sp = btow(mem.Read(pc++), mem.Read(pc++));
+    sp = fetch_u16();
     cycles = 12;
     break;
 
@@ -1010,7 +1020,7 @@ unsigned lmgb::cpu::step() {
 
   // OR n
   case 0xb7: {
-    af.bytes.h = af.bytes.h || af.bytes.h;
+    af.bytes.h = af.bytes.h | af.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1019,7 +1029,7 @@ unsigned lmgb::cpu::step() {
     break;
   }
   case 0xb0: {
-    af.bytes.h = af.bytes.h || bc.bytes.h;
+    af.bytes.h = af.bytes.h | bc.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1028,7 +1038,7 @@ unsigned lmgb::cpu::step() {
     break;
   }
   case 0xb1: {
-    af.bytes.h = af.bytes.h || bc.bytes.l;
+    af.bytes.h = af.bytes.h | bc.bytes.l;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1037,7 +1047,7 @@ unsigned lmgb::cpu::step() {
     break;
   }
   case 0xb2: {
-    af.bytes.h = af.bytes.h || de.bytes.h;
+    af.bytes.h = af.bytes.h | de.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1046,7 +1056,7 @@ unsigned lmgb::cpu::step() {
     break;
   }
   case 0xb3: {
-    af.bytes.h = af.bytes.h || de.bytes.l;
+    af.bytes.h = af.bytes.h | de.bytes.l;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1055,7 +1065,7 @@ unsigned lmgb::cpu::step() {
     break;
   }
   case 0xb4: {
-    af.bytes.h = af.bytes.h || hl.bytes.h;
+    af.bytes.h = af.bytes.h | hl.bytes.h;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1064,7 +1074,7 @@ unsigned lmgb::cpu::step() {
     break;
   }
   case 0xb5: {
-    af.bytes.h = af.bytes.h || hl.bytes.l;
+    af.bytes.h = af.bytes.h | hl.bytes.l;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1074,7 +1084,7 @@ unsigned lmgb::cpu::step() {
   }
   case 0xb6: {
     byte val = mem.Read(hl.pair);
-    af.bytes.h = af.bytes.h || val;
+    af.bytes.h = af.bytes.h | val;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1084,7 +1094,7 @@ unsigned lmgb::cpu::step() {
   }
   case 0xf6: {
     byte val = mem.Read(pc++);
-    af.bytes.h = af.bytes.h || val;
+    af.bytes.h = af.bytes.h | val;
     ZF_CHECK(af.bytes.h) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_RESET(af.bytes.l);
     HF_RESET(af.bytes.l);
@@ -1260,7 +1270,7 @@ unsigned lmgb::cpu::step() {
     byte val = mem.Read(hl.pair);
     HSF_CHECK(af.bytes.h, val) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
     CSF_CHECK(af.bytes.h, val) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
-    byte res = af.bytes.h - res;
+    byte res = af.bytes.h - val;
     ZF_CHECK(res) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 8;
@@ -1270,7 +1280,7 @@ unsigned lmgb::cpu::step() {
     byte val = mem.Read(pc++);
     HSF_CHECK(af.bytes.h, val) ? HF_RESET(af.bytes.l) : HF_SET(af.bytes.l);
     CSF_CHECK(af.bytes.h, val) ? CF_RESET(af.bytes.l) : CF_SET(af.bytes.l);
-    byte res = af.bytes.h - res;
+    byte res = af.bytes.h - val;
     ZF_CHECK(res) ? ZF_SET(af.bytes.l) : ZF_RESET(af.bytes.l);
     NF_SET(af.bytes.l);
     cycles = 8;
@@ -3302,7 +3312,6 @@ unsigned lmgb::cpu::step() {
 
   // DI
   case 0xf3: {
-    step();
     ime = false;
     cycles = 4;
     break;
@@ -3310,7 +3319,6 @@ unsigned lmgb::cpu::step() {
 
   // EI
   case 0xfb: {
-    step();
     ime = true;
     cycles = 4;
     break;
@@ -3435,108 +3443,111 @@ unsigned lmgb::cpu::step() {
 
   // JR cc,n
   case 0x20: {
+    sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+
     if (!ZF_GET(af.bytes.l)) {
-      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
       cycles = 12;
-      break;
+    } else {
+      cycles = 8;
     }
-    cycles = 8;
+
     break;
   }
   case 0x28: {
+    sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+
     if (ZF_GET(af.bytes.l)) {
-      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
       cycles = 12;
-      break;
+    } else {
+      cycles = 8;
     }
-    cycles = 8;
+
     break;
   }
   case 0x30: {
+    sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+
     if (!CF_GET(af.bytes.l)) {
-      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
       cycles = 12;
-      break;
+    } else {
+      cycles = 8;
     }
-    cycles = 8;
+
     break;
   }
   case 0x38: {
+    sbyte offset = static_cast<sbyte>(mem.Read(pc++));
+
     if (CF_GET(af.bytes.l)) {
-      sbyte offset = static_cast<sbyte>(mem.Read(pc++));
       pc += offset;
       cycles = 12;
-      break;
+    } else {
+      cycles = 8;
     }
-    cycles = 8;
+    
     break;
   }
 
   // CALL nn
   case 0xcd: {
-    word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
-    pc += 2;
-    mem.Write(--sp, getmsb(pc));
-    mem.Write(--sp, getlsb(pc));
-    pc = val;
-    cycles = 12;
+    word addr = fetch_u16();
+    pushWord(pc);
+    pc = addr;
+    cycles = 24;
     break;
   }
 
   // CALL cc,nn
   case 0xc4: {
+    word addr = fetch_u16();
+
     if (!ZF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
-      pc += 2;
-      mem.Write(--sp, getmsb(pc));
-      mem.Write(--sp, getlsb(pc));
-      pc = val;
+      pushWord(pc);
+      pc = addr;
       cycles = 24;
-      break;
+    } else {
+      cycles = 12;
     }
-    cycles = 12;
+
     break;
   }
   case 0xcc: {
+    word addr = fetch_u16();
+
     if (ZF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
-      pc += 2;
-      mem.Write(--sp, getmsb(pc));
-      mem.Write(--sp, getlsb(pc));
-      pc = val;
+      pushWord(pc);
+      pc = addr;
       cycles = 24;
-      break;
+    } else {
+      cycles = 12;
     }
-    cycles = 12;
     break;
   }
   case 0xd4: {
+    word addr = fetch_u16();
+
     if (!CF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
-      pc += 2;
-      mem.Write(--sp, getmsb(pc));
-      mem.Write(--sp, getlsb(pc));
-      pc = val;
+      pushWord(pc);
+      pc = addr;
       cycles = 24;
-      break;
+    } else {
+      cycles = 12;
     }
-    cycles = 12;
     break;
   }
   case 0xdc: {
+    word addr = fetch_u16();
+
     if (CF_GET(af.bytes.l)) {
-      word val = btow(mem.Read(pc + 2), mem.Read(pc + 1));
-      pc += 2;
-      mem.Write(--sp, getmsb(pc));
-      mem.Write(--sp, getlsb(pc));
-      pc = val;
+      pushWord(pc);
+      pc = addr;
       cycles = 24;
-      break;
+    } else {
+      cycles = 12;
     }
-    cycles = 12;
     break;
   }
 

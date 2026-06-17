@@ -75,8 +75,8 @@ protected:
 
   byte selectedRom = 0;
   byte selectedRam = 0;
-  word romOffset = 0;
-  word ramOffset = 0;
+  std::size_t romOffset = 0;
+  std::size_t ramOffset = 0;
 
   word romSize = 0; // number of banks
   word ramSize = 0; // number of banks

@@ -35,11 +35,18 @@ inline constexpr word SCANLINE_LENGTH = 456;
 
 inline constexpr unsigned T_CYCLES_PER_M = 4;
 
+constexpr std::uint32_t rgba(byte r, byte g, byte b, byte a = 0xff) {
+  return static_cast<std::uint32_t>(r) |
+        (static_cast<std::uint32_t>(g) << 8) |
+        (static_cast<std::uint32_t>(b) << 16) |
+        (static_cast<std::uint32_t>(a) << 24);
+}
+
 inline constexpr std::array<std::uint32_t, 4> DMG_COLORS {
-    0x9bbc0f,
-    0x8bac0f,
-    0x306230,
-    0x0f380f
+  rgba(0x9b, 0xbc, 0x0f),
+  rgba(0x8b, 0xac, 0x0f),
+  rgba(0x30, 0x62, 0x30),
+  rgba(0x0f, 0x38, 0x0f)
 };
 
 class dmg_palette {

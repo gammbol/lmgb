@@ -25,9 +25,7 @@ mem::~mem() {
 }
 
 void mem::dma_transfer(word addr) {
-  word src = addr & 0xff00;
-
-  if (addr > 0xdf00) return;
+  word src = static_cast<word>(addr) << 8;
 
   for (word i = 0; i < 0xa0; ++i) {
     byte data = Read(src + i);
@@ -69,7 +67,7 @@ byte mem::Read(word addr) {
     ) {
       return interrupt_handler_.read(addr);
     } else if (addr >= 0xff04 && addr <= 0xff07) {
-      timer_.read(addr);
+      return timer_.read(addr);
     } else if (addr >= 0xff40 && addr <= 0xff4b) {
       return pixel_processing_unit_.read(addr);
     } else if (addr >= 0xff80 && addr <= 0xfffe) {
@@ -105,6 +103,7 @@ void mem::Write(word addr, byte val) {
   case 0xc000:
   case 0xd000:
     wram_[addr - 0xc000] = val;
+    break;
 
   case 0xf000: {
     if (addr >= 0xfea0 && addr <= 0xfeff) return;
@@ -118,7 +117,7 @@ void mem::Write(word addr, byte val) {
       timer_.write(addr, val);
     } else if (addr >= 0xff40 && addr <= 0xff4b) {
       if (addr == 0xff46) {
-        dma_transfer(addr);
+        dma_transfer(val);
         pending_cycles_ += 160;
         return;
       }

@@ -28,7 +28,7 @@ gb::gb(const char *path) : rom_data()
 {
   std::ifstream game_data;
 
-  game_data.open(path);
+  game_data.open(path, std::ios::binary);
   if (!game_data.is_open()) {
     throw std::invalid_argument("Unable to open file");
   }

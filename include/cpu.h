@@ -15,7 +15,7 @@ inline constexpr unsigned CYCLES_WHILE_HALTED = 1;
 #define setbatpos(a, pos) (a = a | (1 << pos))
 #define resetbatpos(a, pos) (a = a & ~(0 << pos))
 
-#define getmsb(a) ((a & 0xff00) >> 7)
+#define getmsb(a) ((a & 0xff00) >> 8)
 #define getlsb(a) (a & 0x00ff)
 
 #define btow(a, b) ((a << 8) | b)
@@ -88,6 +88,8 @@ public:
 
   byte popByte();
   word popWord();
+
+  word fetch_u16();
 
   byte readOp(word &pc);
   unsigned step();
