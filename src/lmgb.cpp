@@ -83,8 +83,15 @@ gb::gb(const char *path) : rom_data()
 
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
-  memory_ = new mem{mbc_type, rom_size, ram_size, rom_data, pixel_processing_unit_};
-  cpu_ = new cpu{*memory_};
+  memory_ = new mem{
+    mbc_type, 
+    rom_size, 
+    ram_size, 
+    rom_data, 
+    pixel_processing_unit_,
+    interrupt_handler_
+  };
+  cpu_ = new cpu{*memory_, interrupt_handler_};
   renderer_ = new renderer(game_title, vertex_path, fragment_path);
 }
 
@@ -107,6 +114,12 @@ void gb::step() {
 
   word cycles = cpu_->state == HALTED ? CYCLES_WHILE_HALTED : cpu_->step();
   sync_devices(cycles);
+
+  int extra_cycles = memory_->consume_pending_cycles();
+
+  if (extra_cycles > 0) {
+    sync_devices(extra_cycles);
+  }
 
   bool interrupt_serviced = interrupt_handler_.step(*cpu_);
   if (interrupt_serviced) sync_devices(SERVICING_INTERRUPT_CYCLES);

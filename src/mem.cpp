@@ -3,8 +3,10 @@
 namespace lmgb {
 
 mem::mem(MBC_TYPES mbc_type, ROM_SIZES rom_size,
-        RAM_SIZES ram_size, std::vector<byte> &rom_data, ppu& ppu) : 
-        pixel_processing_unit_(ppu)
+        RAM_SIZES ram_size, std::vector<byte> &rom_data, 
+        ppu& ppu, interrupts& interrupt_handler) : 
+        pixel_processing_unit_(ppu),
+        interrupt_handler_(interrupt_handler)
 {
   switch (mbc_type) {
   default:
@@ -20,6 +22,23 @@ mem::mem(MBC_TYPES mbc_type, ROM_SIZES rom_size,
 
 mem::~mem() {
   delete memory_controller_;
+}
+
+void mem::dma_transfer(word addr) {
+  word src = addr & 0xff00;
+
+  if (addr > 0xdf00) return;
+
+  for (word i = 0; i < 0xa0; ++i) {
+    byte data = Read(src + i);
+    pixel_processing_unit_.write(0xfe00 + i, data);
+  }
+}
+
+int mem::consume_pending_cycles() { 
+  int cycles = pending_cycles_;
+  pending_cycles_ = 0;
+  return cycles;
 }
 
 byte mem::Read(word addr) {
@@ -99,7 +118,8 @@ void mem::Write(word addr, byte val) {
       timer_.write(addr, val);
     } else if (addr >= 0xff40 && addr <= 0xff4b) {
       if (addr == 0xff46) {
-        dma_transfer();
+        dma_transfer(addr);
+        pending_cycles_ += 160;
         return;
       }
 

@@ -64,6 +64,7 @@ union WordRegister {
 
 enum CpuState { RUNNING, HALTED, STOPPED };
 
+// TODO: reorganize visibility field!!!
 class cpu {
 private:
   void getBit(byte reg, int pos);
@@ -71,13 +72,15 @@ private:
 public:
   WordRegister af, bc, de, hl;
   word sp, pc;
-  lmgb::mem& mem;
+  
+  mem& mem;
+  interrupts &interrupt_handler_;
+  
 
   CpuState state;
+  bool ime;
 
-  interrupts interrupt_handler_{};
-
-  cpu(lmgb::mem& memory);
+  cpu(lmgb::mem& memory, interrupts& interrupt_handler);
   // ~Cpu();
 
   void pushByte(byte val);

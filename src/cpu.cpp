@@ -1,6 +1,9 @@
 #include <cpu.h>
 
-lmgb::cpu::cpu(lmgb::mem& memory) : mem(memory) {
+lmgb::cpu::cpu(lmgb::mem& memory, lmgb::interrupts& interrupt_handler) : 
+  mem(memory),
+  interrupt_handler_(interrupt_handler)
+{
 
   state = RUNNING;
   ime = true;

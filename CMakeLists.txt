@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 project(lmgb VERSION 0.0.0)
 
-add_compile_definitions(LMGB_DEBUG)
+#add_compile_definitions(LMGB_DEBUG)
 
 set(CMAKE_CXX_STANDARD 20)
 
