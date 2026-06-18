@@ -104,12 +104,12 @@ void gb::sync_devices(const unsigned cycles) {
 
 void gb::step() {
 #ifdef LMGB_DEBUG
-  std::cout << "============ CPU STATE ============" << std::endl;
-  std::cout << "AF: " << std::hex << (int)cpu_->af.bytes.h << " " << (int)cpu_->af.bytes.l << std::endl;
-  std::cout << "BC: " << std::hex << (int)cpu_->bc.bytes.h << " " << (int)cpu_->bc.bytes.l << std::endl;
-  std::cout << "DE: " << std::hex << (int)cpu_->de.bytes.h << " " << (int)cpu_->de.bytes.l << std::endl;
-  std::cout << "HL: " << std::hex << (int)cpu_->hl.bytes.h << " " << (int)cpu_->hl.bytes.l << std::endl;
-  std::cout << "===================================" << std::endl;
+  std::cout << "============ CPU STATE ============" << std::endl
+  << "AF: " << std::hex << (int)cpu_->af.bytes.h << " " << (int)cpu_->af.bytes.l << std::endl
+  << "BC: " << std::hex << (int)cpu_->bc.bytes.h << " " << (int)cpu_->bc.bytes.l << std::endl
+  << "DE: " << std::hex << (int)cpu_->de.bytes.h << " " << (int)cpu_->de.bytes.l << std::endl
+  << "HL: " << std::hex << (int)cpu_->hl.bytes.h << " " << (int)cpu_->hl.bytes.l << std::endl
+  << "===================================" << std::endl;
 #endif
 
   word cycles = cpu_->state == HALTED ? CYCLES_WHILE_HALTED : cpu_->step();

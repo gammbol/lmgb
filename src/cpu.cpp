@@ -401,6 +401,51 @@ unsigned lmgb::cpu::step() {
     cycles = 8;
     break;
 
+  // LD n,A (partially, because some of them are already implemented)
+  case 0x47:
+    bc.bytes.h = af.bytes.h;
+    cycles = 4;
+    break;
+  case 0x4f:
+    bc.bytes.l = af.bytes.h;
+    cycles = 4;
+    break;
+  case 0x57:
+    de.bytes.h = af.bytes.h;
+    cycles = 4;
+    break;
+  case 0x5f:
+    de.bytes.l = af.bytes.h;
+    cycles = 4;
+    break;
+  case 0x67:
+    hl.bytes.h = af.bytes.h;
+    cycles = 4;
+    break;
+  case 0x6f:
+    hl.bytes.l = af.bytes.h;
+    cycles = 4;
+    break;
+  case 0x02:
+    mem.Write(bc.pair, af.bytes.h);
+    cycles = 8;
+    break;
+  case 0x12:
+    mem.Write(de.pair, af.bytes.h);
+    cycles = 8;
+    break;
+  case 0x77:
+    mem.Write(hl.pair, af.bytes.h);
+    cycles = 8;
+    break;
+  case 0xea: {
+    word val = mem.Read(pc++);
+    val += mem.Read(pc++) << 4;
+    mem.Write(val, af.bytes.h);
+    cycles = 16;
+    break;
+  }
+
   // LD A,(C)
   // LD (C),A
   case 0xf2:
@@ -3667,6 +3712,10 @@ unsigned lmgb::cpu::step() {
     cycles = 8;
     break;
   }
+
+  default:
+    std::cerr << "UNKNOWN OPCODE 0x" << std::hex << (int)opcode << std::endl;
+    break;
   }
 
   return cycles;
