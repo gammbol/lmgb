@@ -8,73 +8,63 @@ class mbc1 : public mbc {
 public:
   mbc1(ROM_SIZES rom_size, RAM_SIZES ram_size, std::vector<byte> &rom_data)
       : mbc(rom_size, ram_size, rom_data) {
-    advancedMode = false;
-
     selectedRom = 1;
-    romOffset = romBankSize;
+    update_rom_offset();
   }
 
   byte read(word addr) override {
-    switch (addr & 0xf000) {
-    case 0x0000:
-    case 0x1000:
-    case 0x2000:
-    case 0x3000:
-      return rom[addr];
-
-    case 0x4000:
-    case 0x5000:
-    case 0x6000:
-    case 0x7000:
-      return rom[addr - 0x4000 + romOffset];
-
-    case 0xa000:
-    case 0xb000: {
-      if (ramSize == 0)
-        return 0xff;
-      if (ramEnable) {
-        return ram[addr - 0xa000 + ramOffset];
-      }
+    if (addr <= 0x3fff) {
+      return safe_rom_read(addr);
     }
 
-    default:
-      return -1;
+    if (addr >= 0x4000 && addr <= 0x7fff) {
+      return safe_rom_read(romOffset + (addr - 0x4000));
     }
+
+    if (addr >= 0xa000 && addr <= 0xbfff) {
+      if (!ramEnable || ramSize == 0) return 0xff;
+      return safe_ram_read(ramOffset + (addr - 0xa000));
+    }
+
+    return 0xff;
   }
 
   void write(word addr, byte val) override {
-    switch (addr & 0xf000) {
-    case 0x0000:
-    case 0x1000:
-      ramEnable = val == 0xa;
-      break;
+    if (addr <= 0x1fff) {
+      ramEnable = (val & 0x0f) == 0x0a;
+      return;
+    }
 
-    case 0x2000:
-    case 0x3000:
-      selectedRom = val & 0x1f;
+    if (addr >= 0x2000 && addr <= 0x3fff) {
+      byte low = val & 0x1f;
+      if (low == 0) low = 1;
+      selectedRom = static_cast<byte>((selectedRom & 0x60) | low);
+      update_rom_offset();
+      return;
+    }
 
-      if (selectedRom == 0) {
-        selectedRom = 1;
-      }
-
-      romOffset = static_cast<std::size_t>(selectedRom % romSize) * romBankSize;
-      break;
-
-    case 0x4000:
-    case 0x5000:
+    if (addr >= 0x4000 && addr <= 0x5fff) {
+      byte two_bits = val & 0x03;
       if (advancedMode) {
-        selectedRam = val & 0x3;
+        selectedRam = two_bits;
+        ramOffset = (ramSize == 0) ? 0 : (selectedRam % ramSize) * ramBankSize;
       } else {
-        selectedRom = (val << 5) + selectedRom;
+        selectedRom = static_cast<byte>((selectedRom & 0x1f) | (two_bits << 5));
+        if ((selectedRom & 0x1f) == 0) selectedRom |= 1;
+        update_rom_offset();
       }
-      break;
+      return;
+    }
 
-    case 0x6000:
-    case 0x7000:
-      advancedMode = val & 1;
-      break;
+    if (addr >= 0x6000 && addr <= 0x7fff) {
+      advancedMode = (val & 0x01) != 0;
+      return;
+    }
 
-    default:
+    if (addr >= 0xa000 && addr <= 0xbfff) {
+      if (ramEnable && ramSize != 0) {
+        safe_ram_write(ramOffset + (addr - 0xa000), val);
+      }
       return;
     }
   }
@@ -82,9 +72,16 @@ public:
 private:
   bool advancedMode = false;
 
-  byte *loadRom(const char *path) override { return nullptr; }
-  byte *loadRam(const char *path) override { return nullptr; }
-  void saveRam(const char *path) override { return; }
+  void update_rom_offset() {
+    if (romSize == 0) {
+      romOffset = 0;
+      return;
+    }
+
+    std::size_t bank = selectedRom % romSize;
+    if (bank == 0 && romSize > 1) bank = 1;
+    romOffset = bank * romBankSize;
+  }
 };
 } // namespace lmgb
 

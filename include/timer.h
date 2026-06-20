@@ -4,33 +4,26 @@
 #include "defs.h"
 #include "interrupts.h"
 
-#define isOverflow(a) ((int)(a + 1) > 0xffff)
-
 namespace lmgb {
-// about timer control
-// idk how to implement it right
-// at first i wanted to use enum, but smth has gone wrong
-// so for now i will be returning just a byte
-
-// 00 - 256M cycles
-// 01 - 4M cycles
-// 10 - 16M cycles
-// 11 - 64M cycles
 
 class timer {
-  word cycles_;
-  byte div_, tima_, tma_, tac_;
+  unsigned div_counter_{};
+  unsigned tima_counter_{};
+  byte div_{};
+  byte tima_{};
+  byte tma_{};
+  byte tac_{};
 
 public:
-  timer();
+  timer() = default;
 
-  short getCS() const;
+  unsigned timer_period() const;
   bool isTacEnabled() const;
 
   byte read(word addr) const;
   void write(word addr, byte value);
 
-  void step(word c, interrupts& interrupt);
+  void step(unsigned cycles, interrupts& interrupt);
 };
 } // namespace lmgb
 

@@ -7,7 +7,7 @@ namespace lmgb {
 
 class cpu;
 
-inline constexpr word SERVICING_INTERRUPT_CYCLES = 5;
+inline constexpr word SERVICING_INTERRUPT_CYCLES = 20;
 
 inline constexpr word INTERRUPT_ENABLE_ADDRESS = 0xffff;
 inline constexpr word INTERRUPT_FLAG_ADDRESS = 0xff0f;

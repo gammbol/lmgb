@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   try {
     lmgb::gb console{argv[1]};
 
-    while (true) {
+    while (!console.should_close()) {
       console.step();
     }
   } catch (std::exception &e) {
@@ -84,12 +84,13 @@ gb::gb(const char *path) : rom_data()
   // reading the whole file
   game_data.read(reinterpret_cast<char *>(rom_data.data()), file_size);
   memory_ = new mem{
-    mbc_type, 
-    rom_size, 
-    ram_size, 
-    rom_data, 
+    mbc_type,
+    rom_size,
+    ram_size,
+    rom_data,
     pixel_processing_unit_,
-    interrupt_handler_
+    interrupt_handler_,
+    timer_
   };
   cpu_ = new cpu{*memory_, interrupt_handler_};
   renderer_ = new renderer(game_title, vertex_path, fragment_path);
@@ -100,6 +101,10 @@ void gb::sync_devices(const unsigned cycles) {
 
   pixel_processing_unit_.step(cycles);
   timer_.step(cycles, interrupt_handler_);
+}
+
+bool gb::should_close() const {
+  return renderer_ == nullptr || renderer_->should_close();
 }
 
 void gb::step() {
@@ -127,12 +132,16 @@ void gb::step() {
   if (pixel_processing_unit_.frame_ready()) {
     renderer_->render(pixel_processing_unit_.framebuffer().data());
     pixel_processing_unit_.clear_frame_ready();
+  } else {
+    renderer_->poll_events();
   }
 }
 
 // lmgb::gb::~gb() { delete rom_data; }
 gb::~gb() {
   delete renderer_;
+  delete cpu_;
+  delete memory_;
 }
 
 }

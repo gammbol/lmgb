@@ -93,7 +93,7 @@ void ppu::step(int cycles) {
     return;
   }
 
-  dots_ += m_to_t_convert(cycles);
+  dots_ += cycles;
 
   switch(mode_) {
   

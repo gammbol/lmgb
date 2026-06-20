@@ -118,6 +118,10 @@ void lmgb::renderer::render(const std::uint32_t *framebuffer) {
   glfwPollEvents();
 }
 
+void lmgb::renderer::poll_events() {
+  glfwPollEvents();
+}
+
 bool lmgb::renderer::should_close() const {
   return glfwWindowShouldClose(window_);
 }

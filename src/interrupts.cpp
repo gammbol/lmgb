@@ -52,7 +52,8 @@ void interrupts::write(word addr, byte val) {
 void interrupts::request_interrupt(INT_TYPE type) { interrupt_flag_ |= type; }
 
 void interrupts::service_interrupt(cpu& cpu, INT_TYPE type, word addr) {
-  interrupt_flag_ &= ~type;
+  interrupt_flag_ &= static_cast<byte>(~type);
+  cpu.ime = false;
   cpu.pushWord(cpu.pc);
   cpu.pc = addr;
 }

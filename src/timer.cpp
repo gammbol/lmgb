@@ -1,70 +1,71 @@
-#include <interrupts.h>
 #include <timer.h>
 
-lmgb::timer::timer() {
-  cycles_ = 0;
-  div_ = 0;
-  tima_ = 0;
-  tma_ = 0;
-  tac_ = 0;
-}
+namespace lmgb {
 
-short lmgb::timer::getCS() const {
-  switch (tac_ & 0b11) {
-  case 0b00:
-    return 256;
-  case 0b01:
-    return 4;
-  case 0b10:
-    return 16;
-  case 0b11:
-    return 64;
-
-  default:
-    return 0;
+unsigned timer::timer_period() const {
+  switch (tac_ & 0x03) {
+  case 0x00: return 1024; // 4096 Hz
+  case 0x01: return 16;   // 262144 Hz
+  case 0x02: return 64;   // 65536 Hz
+  case 0x03: return 256;  // 16384 Hz
+  default: return 1024;
   }
 }
 
-bool lmgb::timer::isTacEnabled() const { return (tac_ & 0x04) >> 2; }
+bool timer::isTacEnabled() const { return (tac_ & 0x04) != 0; }
 
-lmgb::byte lmgb::timer::read(const word addr) const {
+byte timer::read(word addr) const {
   switch (addr) {
   case 0xff04: return div_;
+  case 0xff05: return tima_;
   case 0xff06: return tma_;
-  case 0xff07: return tac_;
+  case 0xff07: return static_cast<byte>(tac_ | 0xf8);
+  default: return 0xff;
   }
 }
 
-void lmgb::timer::write(const word addr, const byte value) {
-  switch (addr & 0x00ff) {
-  case 0x04:
+void timer::write(word addr, byte value) {
+  switch (addr) {
+  case 0xff04:
     div_ = 0;
+    div_counter_ = 0;
     break;
-  case 0x06:
+  case 0xff05:
+    tima_ = value;
+    break;
+  case 0xff06:
     tma_ = value;
     break;
-  case 0x07:
-    tac_ = value & 0x03;
-  default:;
+  case 0xff07:
+    tac_ = static_cast<byte>(value & 0x07);
+    break;
+  default:
+    break;
   }
 }
 
-void lmgb::timer::step(const word c, interrupts& interrupt) {
-  cycles_ += c;
+void timer::step(unsigned cycles, interrupts& interrupt) {
+  div_counter_ += cycles;
+  while (div_counter_ >= 256) {
+    div_counter_ -= 256;
+    ++div_;
+  }
 
-  // DIV
-  // if (cycles % 64 != 0)
-  //   div++;
-  div_ = cycles_ % 64;
+  if (!isTacEnabled()) {
+    return;
+  }
 
-  // TIMA
-  if (isTacEnabled()) {
-    if (isOverflow(tima_)) {
+  tima_counter_ += cycles;
+  const unsigned period = timer_period();
+  while (tima_counter_ >= period) {
+    tima_counter_ -= period;
+    if (tima_ == 0xff) {
       tima_ = tma_;
       interrupt.request_interrupt(T_OVERFLOW);
-      return;
+    } else {
+      ++tima_;
     }
-    tima_ = cycles_ % getCS();
   }
-  // tima = isOverflow(tima) ? tma : cycles % getCS();
 }
+
+} // namespace lmgb

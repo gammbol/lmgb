@@ -39,6 +39,7 @@ public:
   
   void sync_devices(const unsigned cycles);
 
+  bool should_close() const;
   void step();
 };
 

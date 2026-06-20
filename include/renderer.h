@@ -25,6 +25,7 @@ public:
   renderer &operator=(const renderer &) = delete;
 
   void render(const std::uint32_t *framebuffer);
+  void poll_events();
   bool should_close() const;
 
 private:
